@@ -3,497 +3,578 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b0a1f">
+<meta name="theme-color" content="#2a0a1e">
 <title>بۆ سومەیە 💗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --rose:#ff7eb6;
-    --gold:#ffd9a0;
-    --violet:#9b6bff;
-    --text:#f6eefc;
-  }
+  :root{--gold:#f6c870;--cream:#fff1dc}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;margin:0}
   body{
-    background:radial-gradient(ellipse at 50% 0%,#2a1559 0%,#140c33 45%,#07061a 100%);
-    color:var(--text);
-    font-family:'Vazirmatn','Noto Naskh Arabic',Tahoma,sans-serif;
-    line-height:1.9;
-    overflow:hidden;
+    background:#1a0612;color:var(--cream);overflow:hidden;
+    font-family:'Amiri','Vazirmatn','Noto Naskh Arabic',Tahoma,serif;line-height:1.9;
     -webkit-user-select:none;user-select:none;
   }
-  #bg,#confetti{position:fixed;inset:0;width:100%;height:100%}
-  #bg{z-index:0}
-  #confetti{z-index:50;pointer-events:none}
-
-  /* ---------- stages ---------- */
+  .bg{position:fixed;inset:0;z-index:0;opacity:0;transition:opacity 1.4s ease}
+  .bg.on{opacity:1}
+  #fx{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
   .stage{
-    position:fixed;inset:0;z-index:2;
+    position:fixed;inset:0;z-index:2;opacity:0;visibility:hidden;transition:opacity .8s ease,visibility .8s ease;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:max(18px,env(safe-area-inset-top)) 20px max(18px,env(safe-area-inset-bottom));
-    text-align:center;overflow-y:auto;
-    opacity:0;visibility:hidden;
-    transition:opacity .9s ease,visibility .9s ease;
   }
   .stage.active{opacity:1;visibility:visible}
 
-  h1{font-size:clamp(2.2rem,10vw,3.4rem);margin:.15em 0;font-weight:800;line-height:1.5}
-  h2{font-size:clamp(1.3rem,5.5vw,1.8rem);margin:.2em 0;font-weight:800}
-  p{margin:.4em 0}
-  .soft{color:#d9c8f0;font-weight:300}
-  .glow-text{
-    background:linear-gradient(90deg,var(--gold),var(--rose),#c99bff);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 14px rgba(255,126,182,.45));
+  /* ---------- lock ---------- */
+  .glass{
+    width:min(92vw,400px);padding:30px 22px;text-align:center;border-radius:26px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(246,200,112,.45);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.45);
   }
-
+  .glass h1{font-size:clamp(1.7rem,7vw,2.2rem);margin:.1em 0;color:var(--gold)}
+  .glass p{margin:.2em 0;font-family:'Vazirmatn',sans-serif;font-weight:300;font-size:.95rem;color:#f3d9c8}
+  .lock-ico{font-size:3rem;animation:floaty 3s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .date-in{
+    width:100%;font:inherit;font-family:'Vazirmatn',sans-serif;font-size:1.4rem;text-align:center;letter-spacing:.1em;direction:ltr;
+    padding:12px;border-radius:16px;border:2px solid rgba(246,200,112,.45);background:rgba(0,0,0,.28);color:var(--cream);
+    outline:none;margin-top:16px;-webkit-user-select:text;user-select:text;
+  }
+  .date-in:focus{border-color:var(--gold)}
+  .date-in::placeholder{color:rgba(255,241,220,.4)}
+  .date-in.shake{animation:shake .45s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
   .btn{
-    font-family:inherit;font-size:1.05rem;font-weight:600;color:#fff;
-    background:linear-gradient(135deg,#ff7eb6,#9b6bff);
-    border:none;border-radius:999px;padding:13px 34px;margin-top:18px;
-    box-shadow:0 8px 28px rgba(255,126,182,.35);
-    cursor:pointer;transition:transform .15s ease,box-shadow .2s ease;
+    font-family:'Vazirmatn',sans-serif;font-size:1.02rem;font-weight:600;color:#3a1220;
+    background:linear-gradient(135deg,#ffe2a1,#f1b255);border:none;border-radius:999px;padding:12px 34px;margin-top:16px;
+    box-shadow:0 8px 24px rgba(241,178,85,.35);cursor:pointer;
   }
   .btn:active{transform:scale(.95)}
-  .btn.ghost{background:rgba(255,255,255,.09);box-shadow:none;border:1px solid rgba(255,255,255,.2)}
-  .btn[hidden]{display:none}
+  #lockMsg{min-height:3em;margin-top:10px;font-size:.95rem;color:#ffb3c6;font-weight:600}
 
-  .float-heart{font-size:3.2rem;animation:floaty 3s ease-in-out infinite;filter:drop-shadow(0 0 18px rgba(255,126,182,.7))}
-  @keyframes floaty{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.08)}}
-
-  .fade-up{animation:fadeUp 1s ease both}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-  /* ---------- sky ---------- */
-  .sky-title{font-size:1.15rem;color:var(--gold);letter-spacing:.02em;margin:0}
-  #skyHint{font-size:.9rem;color:#cdbbe8;margin:2px 0 0;min-height:1.8em}
-  #skyMsg{
-    min-height:5.4em;max-width:340px;display:flex;align-items:center;justify-content:center;
-    font-size:1.08rem;font-weight:400;color:#fff;padding:0 6px;
+  /* ---------- story ---------- */
+  .bars{position:absolute;top:max(10px,env(safe-area-inset-top));left:12px;right:12px;display:flex;gap:4px;direction:rtl;z-index:30;pointer-events:none}
+  .bars i{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.22);overflow:hidden}
+  .bars i b{display:block;height:100%;width:0;background:var(--gold);transition:width .5s ease}
+  .bars i.done b{width:100%}
+  .tap{position:absolute;top:0;bottom:0;z-index:10;cursor:pointer}
+  #tapNext{right:0;width:62%}
+  #tapPrev{left:0;width:38%}
+  .content{
+    position:relative;z-index:20;pointer-events:none;width:100%;max-width:520px;
+    padding:70px 28px 60px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;
   }
-  #skyMsg.pop{animation:fadeUp .6s ease both}
-  .sky-svg{width:min(90vw,44vh,400px);height:auto;aspect-ratio:1;overflow:visible;touch-action:manipulation}
-  .star .halo{fill:rgba(255,190,225,.22)}
-  .star .core{fill:#fff;transition:fill .4s}
-  .star.next .halo{animation:pulse 1.3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
-  .star.done .core{fill:var(--gold)}
-  .star.done .halo{fill:rgba(255,217,160,.3)}
-  .star{cursor:pointer}
-  @keyframes pulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(2.3);opacity:1}}
-  .seg{stroke:#ffc2e2;stroke-width:.7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease;filter:drop-shadow(0 0 1.5px #ff7eb6)}
-  .seg.draw{stroke-dashoffset:0}
-  #heartFill{fill:rgba(255,126,182,.14);opacity:0;transition:opacity 1.6s ease}
-  #heartFill.show{opacity:1}
-  #skyName{font-size:clamp(2.2rem,11vw,3.3rem);font-weight:800;opacity:0;transition:opacity 1.6s ease;margin:0;line-height:1.4}
-  #skyName.show{opacity:1}
-
-  /* ---------- book ---------- */
-  .book-wrap{perspective:1400px;width:min(90vw,380px)}
-  .page{
-    min-height:min(56vh,430px);
-    background:linear-gradient(160deg,#fff7ee,#f7e7da);
-    color:#3d2650;border-radius:8px 20px 20px 8px;
-    box-shadow:0 18px 50px rgba(0,0,0,.5),inset 6px 0 14px rgba(120,70,60,.12);
-    padding:28px 24px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    transform-origin:right center;
-    border-right:6px solid #c9507f;
+  .content button{pointer-events:auto}
+  .icon{font-size:2.6rem;margin-bottom:10px;opacity:0;animation:lineIn 1.2s ease forwards,floaty 3.2s ease-in-out 1.2s infinite}
+  .ln{
+    font-size:clamp(1.35rem,6vw,1.9rem);line-height:2.1;margin:.22em 0;color:var(--cream);opacity:0;
+    animation:lineIn 1.2s ease forwards;text-shadow:0 2px 18px rgba(0,0,0,.45);
   }
-  .page.flip-next{animation:flipNext .6s cubic-bezier(.3,.7,.3,1) both}
-  .page.flip-prev{animation:flipPrev .6s cubic-bezier(.3,.7,.3,1) both}
-  @keyframes flipNext{from{transform:rotateY(-80deg);opacity:0}to{transform:rotateY(0);opacity:1}}
-  @keyframes flipPrev{from{transform:rotateY(80deg);opacity:0}to{transform:rotateY(0);opacity:1}}
-  .page h2{color:#b83b6e;margin:.1em 0 .3em}
-  .page p{font-size:1.05rem;line-height:2.05;color:#4a3258}
-  .page .orn{font-size:1.6rem;color:#d96a98}
-  .page .pg{margin-top:auto;padding-top:16px;font-size:.8rem;color:#a58bb3}
-  .page.cover{background:linear-gradient(160deg,#8d2f63,#4b2a86);color:#fff;border-right-color:var(--gold)}
-  .page.cover h2{color:var(--gold);font-size:clamp(1.8rem,8vw,2.4rem)}
-  .page.cover p{color:#fbe9ff}
-  .book-ctrl{display:flex;align-items:center;gap:12px;margin-top:18px}
-  .book-ctrl .btn{margin-top:0;padding:11px 24px;font-size:.98rem}
-  .dots{display:flex;gap:7px;justify-content:center;margin-top:14px}
-  .dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);transition:.3s}
-  .dots i.on{background:var(--rose);transform:scale(1.35)}
+  .ln.title{font-size:clamp(1.9rem,8.4vw,2.8rem);color:var(--gold);font-weight:700;line-height:1.7}
+  .ln em{font-style:normal;color:var(--gold);font-weight:700;text-shadow:0 0 16px rgba(246,200,112,.6)}
+  .ln.reply{color:#ffd1e1}
+  @keyframes lineIn{from{opacity:0;transform:translateY(16px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
 
-  /* ---------- quiz ---------- */
-  .card{
-    width:min(92vw,400px);background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.16);border-radius:26px;padding:26px 20px;
-    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-    box-shadow:0 16px 50px rgba(0,0,0,.35);
+  .who{display:flex;align-items:center;gap:10px;margin-bottom:12px;opacity:0;animation:lineIn .8s ease forwards}
+  .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ffe2a1,#d9893a);color:#4a1a2a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem}
+  .who b{font-family:'Vazirmatn',sans-serif;font-weight:600;font-size:.95rem;display:block;line-height:1.3;text-align:right}
+  .who small{font-family:'Vazirmatn',sans-serif;font-size:.75rem;color:#9ff0b7;display:block;text-align:right}
+  .bubs{display:flex;flex-direction:column;align-items:flex-start;width:100%;gap:8px}
+  .bub{
+    max-width:92%;padding:12px 18px;border-radius:20px 20px 6px 20px;text-align:right;font-size:clamp(1.15rem,5vw,1.45rem);line-height:2;
+    background:rgba(255,255,255,.12);border:1px solid rgba(246,200,112,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    animation:pop .45s cubic-bezier(.3,1.5,.5,1) both;transform-origin:top right;
   }
-  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .bub.now{animation:none}
+  @keyframes pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+  .typing{display:flex;gap:5px;padding:14px 18px;border-radius:20px 20px 6px 20px;background:rgba(255,255,255,.12);border:1px solid rgba(246,200,112,.35)}
+  .typing span{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:dot 1s infinite}
+  .typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+  @keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-6px);opacity:1}}
+
+  .opts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px;opacity:0;animation:lineIn 1s ease 1.6s forwards}
   .opt{
-    font-family:inherit;font-size:1rem;color:#fff;background:rgba(255,255,255,.1);
-    border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:13px 8px;cursor:pointer;
-    transition:transform .15s,background .25s;
+    font-family:'Vazirmatn',sans-serif;font-size:1rem;color:var(--cream);background:rgba(255,255,255,.12);
+    border:1px solid rgba(246,200,112,.6);border-radius:999px;padding:11px 22px;cursor:pointer;
   }
-  .opt:active{transform:scale(.96)}
-  .opt:disabled{cursor:default}
-  .opt.chosen{background:linear-gradient(135deg,#ff7eb6,#9b6bff);border-color:transparent}
-  .opt.fade{opacity:.35}
-  #quizRes{min-height:3.2em;margin-top:14px;color:var(--gold);font-weight:600}
-  .progress{font-size:.85rem;color:#cdbbe8}
+  .opt:active{transform:scale(.95)}
+  .opt:disabled{opacity:.4}
+  .opt.chosen{background:linear-gradient(135deg,#ffe2a1,#f1b255);color:#3a1220;opacity:1}
 
-  /* ---------- ask ---------- */
-  .ask-q{font-size:clamp(1.45rem,6.4vw,2rem);font-weight:800;line-height:1.8;margin:.2em 0 .1em}
-  .ask-btns{display:flex;gap:16px;justify-content:center;align-items:center;margin-top:26px;min-height:70px}
-  .ask-btns .btn{margin-top:0}
-  #yesBtn{font-size:1.2rem;padding:14px 38px;transition:transform .3s ease;background:linear-gradient(135deg,#ff5fa0,#ffb36b)}
-  #noBtn{background:rgba(255,255,255,.12);box-shadow:none;border:1px solid rgba(255,255,255,.25);touch-action:none;z-index:20}
-  #noBtn.moving{position:fixed;transition:left .25s ease,top .25s ease}
-  #final{display:none}
-  #final.show{display:block;animation:fadeUp 1.2s ease both}
-  .ring{font-size:4rem;animation:floaty 2.6s ease-in-out infinite}
+  .heart-box{position:relative;display:inline-block;margin-top:10px}
+  .beat-btn{
+    position:relative;z-index:2;background:none;border:none;padding:0;cursor:pointer;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;filter:drop-shadow(0 10px 22px rgba(255,90,140,.55));
+  }
+  .beat-btn svg{width:150px;height:140px;display:block}
+  .beat-btn.on svg{animation:beat 1s ease-in-out infinite}
+  @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.22)}30%{transform:scale(1)}45%{transform:scale(1.15)}60%{transform:scale(1)}}
+  .ripple{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:2px solid rgba(255,170,200,.85);animation:rip 1.3s ease-out forwards;z-index:1;pointer-events:none}
+  @keyframes rip{from{transform:scale(1);opacity:.8}to{transform:scale(3.2);opacity:0}}
+  #beatText{min-height:3em;margin:6px 0 0;font-size:1.2rem}
+  #beatCount{font-size:1.7rem;font-weight:700;color:var(--gold);min-height:1.8em;font-family:'Vazirmatn',sans-serif}
+
+  .tap-hint{
+    position:absolute;bottom:max(26px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;z-index:25;pointer-events:none;
+    font-family:'Vazirmatn',sans-serif;font-size:.88rem;color:#f3d9c8;opacity:0;animation:lineIn 1s ease 2.6s forwards,bob 1.8s ease-in-out 3.6s infinite;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+  #mute{
+    position:fixed;top:calc(max(10px,env(safe-area-inset-top)) + 16px);left:12px;z-index:60;width:40px;height:40px;border-radius:50%;
+    border:1px solid rgba(246,200,112,.5);background:rgba(0,0,0,.35);color:#fff;font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;
+  }
+  #mute.show{display:flex}
 </style>
 </head>
 <body>
 
-<canvas id="bg"></canvas>
-<canvas id="confetti"></canvas>
+<audio id="bgm" src="music.mp3" loop preload="auto"></audio>
 
-<!-- ============ 0. INTRO ============ -->
-<section class="stage active" id="intro">
-  <div class="float-heart">💫</div>
-  <p class="soft fade-up" style="animation-delay:.3s">شتێکی بچووکم ئامادە کردووە بۆ دڵیخۆم</p>
-  <h1 class="glow-text fade-up" style="animation-delay:.7s">سومەیە</h1>
-  <p class="soft fade-up" style="animation-delay:1.1s;max-width:300px">بە دڵێکی پڕ لە خۆشەویستی، تەنیا بۆ تۆ.</p>
-  <button class="btn fade-up" style="animation-delay:1.6s" id="startBtn">دەست پێبکە ✨</button>
-</section>
+<div class="bg" id="bgA"></div>
+<div class="bg" id="bgB"></div>
+<canvas id="fx"></canvas>
+<button id="mute" aria-label="میوزیک">🔊</button>
 
-<!-- ============ 1. SKY ============ -->
-<section class="stage" id="sky">
-  <p class="sky-title">ئاسمانی ئێمە</p>
-  <p id="skyHint">ئەستێرە درەوشاوەکان بە ڕیز بپەستێوە و بیانبەستەوە</p>
-  <div id="skyMsg"></div>
-  <svg class="sky-svg" id="skySvg" viewBox="0 0 100 100" aria-label="ئاسمانی ئەستێرەکان"></svg>
-  <h2 id="skyName" class="glow-text">سومەیە</h2>
-  <button class="btn" id="skyNext" hidden>بەردەوام بە 📖</button>
-</section>
-
-<!-- ============ 2. BOOK ============ -->
-<section class="stage" id="book">
-  <div class="book-wrap"><div class="page" id="page"></div></div>
-  <div class="dots" id="dots"></div>
-  <div class="book-ctrl">
-    <button class="btn ghost" id="prevBtn">‹ پێشوو</button>
-    <button class="btn" id="nextBtn">دواتر ›</button>
+<!-- ======= LOCK ======= -->
+<section class="stage active" id="lock">
+  <div class="glass">
+    <div class="lock-ico">🔐</div>
+    <h1>نامەکەم داخستووە</h1>
+    <p>بۆ کردنەوەی، بەرواری ئەو ڕۆژە بنووسە کە یەکەم جار یەکترمان ناسی</p>
+    <input class="date-in" id="dateIn" type="text" inputmode="numeric" autocomplete="off" placeholder="__ / __ / ____" maxlength="12">
+    <div id="lockMsg"></div>
+    <button class="btn" id="unlockBtn">بیکەرەوە 🔓</button>
   </div>
 </section>
 
-<!-- ============ 3. QUIZ ============ -->
-<section class="stage" id="quiz">
-  <div class="card" id="quizCard">
-    <div class="progress" id="quizProg"></div>
-    <h2 id="quizQ"></h2>
-    <div class="opts" id="quizOpts"></div>
-    <div id="quizRes"></div>
-    <button class="btn" id="quizNext" hidden>دواتر</button>
-  </div>
-</section>
-
-<!-- ============ 4. ASK ============ -->
-<section class="stage" id="ask">
-  <div id="askBox">
-    <div class="float-heart">💍</div>
-    <p class="soft">پرسیارێکی کۆتایی...</p>
-    <div class="ask-q glow-text">سومەیە، ئایا قبوڵ دەکەیت ببیت بە دەستگیرانم؟</div>
-    <div class="ask-btns" id="askBtns">
-      <button class="btn" id="yesBtn">بەڵێ 💗</button>
-      <button class="btn" id="noBtn">نەخێر 😅</button>
-    </div>
-  </div>
-  <div id="final">
-    <div class="ring">💍</div>
-    <h1 class="glow-text">  سوپاس سومەیە گیان💗</h1>
-    <p style="max-width:320px;margin-inline:auto">ئەمڕۆ خۆشحاڵترین مرۆڤی ئەم دونیایەم. ئەوەی لە ٤/١٠/٢٠٢٦ دەستی پێکرد، ئێستا بووە بە بەڵێنێک.</p>
-    <p class="soft" style="margin-top:18px">📸 وێنەی ئەم شاشەیە بگرە و بۆمی بنێرە</p>
-  </div>
+<!-- ======= STORY ======= -->
+<section class="stage" id="story">
+  <div class="bars" id="bars"></div>
+  <div class="tap" id="tapPrev"></div>
+  <div class="tap" id="tapNext"></div>
+  <div class="content" id="content"></div>
+  <div class="tap-hint" id="tapHint" hidden>👉 لایەکی ڕاستی شاشەکە بپەستێوە بۆ دواتر</div>
 </section>
 
 <script>
 (function(){
   'use strict';
-
-  /* ---------- helpers ---------- */
   const $ = id => document.getElementById(id);
   const toKu = v => String(v).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
-  const MEET = new Date(2026, 3, 10); // 10 April 2026
-  const daysSince = Math.max(0, Math.floor((Date.now() - MEET.getTime()) / 86400000));
 
-  function show(id){
-    document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
-    $(id).classList.add('active');
-    $(id).scrollTop = 0;
+  /* =====================================================
+     BACKGROUNDS
+     ===================================================== */
+  const BG = {
+    wine:    'linear-gradient(165deg,#2a0a1e 0%,#4d1030 55%,#7a1b45 100%)',
+    night:   'linear-gradient(165deg,#07061c 0%,#1a1245 55%,#3b1a63 100%)',
+    emerald: 'linear-gradient(165deg,#031c18 0%,#0b4a3c 50%,#3a1230 100%)',
+    rose:    'linear-gradient(165deg,#3a0a22 0%,#8a1f4c 55%,#c9456f 100%)',
+    gold:    'linear-gradient(165deg,#241008 0%,#6b3c12 55%,#c28a2c 100%)',
+    plum:    'linear-gradient(165deg,#170a2b 0%,#4d2162 55%,#8a3a86 100%)'
+  };
+  let bgSide = 0, bgNow = '';
+  function setBg(name){
+    if (bgNow === name) return; bgNow = name;
+    const on = bgSide ? $('bgB') : $('bgA'), off = bgSide ? $('bgA') : $('bgB');
+    on.style.background = BG[name];
+    on.classList.add('on'); off.classList.remove('on');
+    bgSide = 1 - bgSide;
   }
+  setBg('wine');
 
-  /* ---------- starfield background ---------- */
-  (function(){
-    const c = $('bg'), ctx = c.getContext('2d');
-    let W, H, stars = [], shoot = null;
-    function resize(){
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = innerWidth; H = innerHeight;
-      c.width = W * dpr; c.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(W * H / 6500);
-      stars = Array.from({length: n}, () => ({
-        x: Math.random() * W, y: Math.random() * H,
-        r: Math.random() * 1.3 + .2,
-        p: Math.random() * 6.28, s: .6 + Math.random() * 1.6
-      }));
+  /* =====================================================
+     FX LAYER
+     ===================================================== */
+  const FX = (function(){
+    const cv = $('fx'), g = cv.getContext('2d');
+    let W, H, mode = 'dust', ps = [], bursts = [], fade = 0;
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const petalCols = ['rgba(255,120,160,.65)', 'rgba(255,170,200,.65)', 'rgba(235,85,130,.6)', 'rgba(255,210,220,.7)'];
+    const counts = {petals: 26, dust: 70, glow: 70, emerald: 26, stars: 100, hearts: 14, waves: 0, none: 0};
+
+    function spawn(init){
+      switch (mode){
+        case 'petals': return {k: 'p', x: rand(0, W), y: init ? rand(0, H) : -20, w: rand(5, 11), vy: rand(.5, 1.5), sw: rand(0, 6.28), ss: rand(.01, .03), r: rand(0, 6.28), vr: rand(-.05, .05), c: pick(petalCols)};
+        case 'dust': case 'glow': return {k: 'd', x: rand(0, W), y: init ? rand(0, H) : H + 10, r: rand(.6, 2.3), vy: -rand(.15, .6), ph: rand(0, 6.28), s: rand(.8, 2)};
+        case 'emerald': return {k: 'e', x: rand(0, W), y: init ? rand(0, H) : H + 40, r: rand(10, 34), vy: -rand(.1, .4), vx: rand(-.2, .2), ph: rand(0, 6.28), a: rand(.14, .34)};
+        case 'stars': return {k: 's', x: rand(0, W), y: rand(0, H), r: rand(.3, 1.5), ph: rand(0, 6.28), s: rand(.6, 2)};
+        case 'hearts': return {k: 'h', x: rand(0, W), y: init ? rand(0, H) : H + 30, vy: -rand(.5, 1.3), s: rand(14, 30), ph: rand(0, 6.28), e: pick(['💗', '💖', '💕', '🤍'])};
+      }
+      return null;
     }
-    function frame(t){
-      ctx.clearRect(0, 0, W, H);
-      for (const s of stars){
-        const a = .35 + .65 * Math.abs(Math.sin(t / 1000 * s.s + s.p));
-        ctx.globalAlpha = a;
-        ctx.fillStyle = '#fff';
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
+    function resize(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      setMode(mode, true);
+    }
+    function setMode(m, force){
+      if (m === mode && !force) return;
+      mode = m; ps = []; fade = 0;
+      for (let i = 0; i < (counts[m] || 0); i++) ps.push(spawn(true));
+    }
+    function burst(){
+      for (let i = 0; i < 34; i++){
+        bursts.push({x: W / 2 + rand(-40, 40), y: H * .62, vx: rand(-3.2, 3.2), vy: -rand(2, 7), s: rand(18, 34), l: 0, e: pick(['💗', '💖', '💕', '✨', '🌹'])});
       }
-      if (!shoot && Math.random() < .004){
-        shoot = {x: Math.random() * W, y: Math.random() * H * .4, l: 0};
+    }
+    function frame(time){
+      g.clearRect(0, 0, W, H);
+      fade = Math.min(1, fade + .02);
+      g.globalAlpha = fade;
+
+      if (mode === 'stars'){
+        const mx = W * .2, my = H * .16;
+        const gl = g.createRadialGradient(mx, my, 6, mx, my, 120);
+        gl.addColorStop(0, 'rgba(255,246,225,.5)'); gl.addColorStop(1, 'rgba(255,246,225,0)');
+        g.fillStyle = gl; g.fillRect(mx - 130, my - 130, 260, 260);
+        g.fillStyle = '#fff6e1'; g.beginPath(); g.arc(mx, my, 24, 0, 6.283); g.fill();
       }
-      if (shoot){
-        shoot.x -= 9; shoot.y += 5; shoot.l++;
-        ctx.globalAlpha = Math.max(0, 1 - shoot.l / 30);
-        ctx.strokeStyle = '#ffd9f0'; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(shoot.x, shoot.y); ctx.lineTo(shoot.x + 40, shoot.y - 22); ctx.stroke();
-        if (shoot.l > 30) shoot = null;
+      if (mode === 'glow'){
+        const a = .28 + .1 * Math.sin(time / 900);
+        const gl = g.createRadialGradient(W / 2, -20, 10, W / 2, -20, H * .8);
+        gl.addColorStop(0, 'rgba(255,225,150,' + a + ')'); gl.addColorStop(1, 'rgba(255,225,150,0)');
+        g.fillStyle = gl; g.fillRect(0, 0, W, H);
       }
-      ctx.globalAlpha = 1;
+      if (mode === 'waves'){
+        for (let i = 0; i < 7; i++){
+          g.beginPath();
+          for (let x = 0; x <= W; x += 10){
+            const y = H * (.2 + .09 * i) + Math.sin(x * .011 + time * .0008 * (1 + i * .15) + i) * 30 + Math.sin(x * .023 - time * .0005 + i) * 14;
+            if (x === 0) g.moveTo(x, y); else g.lineTo(x, y);
+          }
+          g.strokeStyle = 'rgba(255,205,150,' + (.1 + .025 * i) + ')'; g.lineWidth = 2.2; g.stroke();
+        }
+      }
+
+      for (let i = 0; i < ps.length; i++){
+        const q = ps[i];
+        switch (q.k){
+          case 'p':
+            q.sw += q.ss; q.r += q.vr; q.y += q.vy; q.x += Math.sin(q.sw) * .7;
+            if (q.y > H + 20) ps[i] = spawn(false);
+            g.save(); g.translate(q.x, q.y); g.rotate(q.r); g.fillStyle = q.c;
+            g.beginPath(); g.ellipse(0, 0, q.w, q.w * 1.6, 0, 0, 6.283); g.fill(); g.restore();
+            break;
+          case 'd':
+            q.ph += .02; q.y += q.vy; q.x += Math.sin(q.ph) * .25;
+            if (q.y < -10) ps[i] = spawn(false);
+            g.fillStyle = 'rgba(255,225,160,' + (.25 + .6 * Math.abs(Math.sin(q.ph * q.s))) + ')';
+            g.beginPath(); g.arc(q.x, q.y, q.r, 0, 6.283); g.fill();
+            break;
+          case 'e': {
+            q.ph += .015; q.y += q.vy; q.x += q.vx + Math.sin(q.ph) * .2;
+            if (q.y < -50) ps[i] = spawn(false);
+            const a = q.a * (.6 + .4 * Math.sin(q.ph * 2));
+            const gr = g.createRadialGradient(q.x, q.y, 0, q.x, q.y, q.r);
+            gr.addColorStop(0, 'rgba(120,255,190,' + a + ')'); gr.addColorStop(1, 'rgba(120,255,190,0)');
+            g.fillStyle = gr; g.fillRect(q.x - q.r, q.y - q.r, q.r * 2, q.r * 2);
+            break;
+          }
+          case 's':
+            g.fillStyle = '#fff';
+            g.globalAlpha = fade * (.3 + .7 * Math.abs(Math.sin(time / 1000 * q.s + q.ph)));
+            g.beginPath(); g.arc(q.x, q.y, q.r, 0, 6.283); g.fill();
+            g.globalAlpha = fade;
+            break;
+          case 'h':
+            q.ph += .03; q.y += q.vy; q.x += Math.sin(q.ph) * .6;
+            if (q.y < -40) ps[i] = spawn(false);
+            g.globalAlpha = fade * .6; g.font = q.s + 'px serif'; g.textAlign = 'center'; g.fillText(q.e, q.x, q.y);
+            g.globalAlpha = fade;
+            break;
+        }
+      }
+
+      g.globalAlpha = 1;
+      for (let i = bursts.length - 1; i >= 0; i--){
+        const b = bursts[i];
+        b.x += b.vx; b.y += b.vy; b.vy += .12; b.l++;
+        const a = 1 - b.l / 100;
+        if (a <= 0){ bursts.splice(i, 1); continue; }
+        g.globalAlpha = a; g.font = b.s + 'px serif'; g.textAlign = 'center'; g.fillText(b.e, b.x, b.y);
+      }
+      g.globalAlpha = 1;
       requestAnimationFrame(frame);
     }
     addEventListener('resize', resize);
     resize(); requestAnimationFrame(frame);
+    return {setMode, burst};
   })();
 
-  /* ---------- stage 0 → 1 ---------- */
-  $('startBtn').addEventListener('click', () => { show('sky'); });
-
-  /* ---------- stage 1: constellation heart ---------- */
-  const skyMsgs = [
-    '٤/١٠/٢٠٢٦ — یەکەم جار یەکترمان ناسی ✨',
-    'یەکەم قسەمان، و هەر لەو ساتەوە شتێک گۆڕا.',
-    'هەر ڕۆژێک زیاتر دەتناسم، و زیاتر خۆشم دەوێیت.',
-    'بزەکەت ڕۆژەکانمی ڕووناک کردەوە.',
-    'لەگەڵ تۆ دونیا هێمنتر و جوانترە.',
-    'هەموو خەونەکانم ناوی تۆیان تێدایە.',
-    'دەمەوێت هەموو ڕۆژەکانی ژیانم لە تەنیشت تۆ بن.',
-    'ئەمە دڵی منە، و تەواو بۆ تۆیە 💗'
-  ];
-  const T = [0, .9, 1.8, 2.6, Math.PI, 2*Math.PI - 2.6, 2*Math.PI - 1.8, 2*Math.PI - .9];
-  const pts = T.map(t => {
-    const x = 16 * Math.pow(Math.sin(t), 3);
-    const y = 13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
-    return [50 + x * 2.6, 40 - y * 2.1];
-  });
-  const NS = 'http://www.w3.org/2000/svg';
-  const svg = $('skySvg');
-  const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
-
-  const fill = mk('polygon', {id: 'heartFill', points: pts.map(p => p.join(',')).join(' ')});
-  svg.appendChild(fill);
-  const segs = [];
-  for (let i = 0; i < pts.length; i++){
-    const a = pts[i], b = pts[(i + 1) % pts.length];
-    const l = mk('line', {x1: a[0], y1: a[1], x2: b[0], y2: b[1], pathLength: 1, class: 'seg'});
-    svg.appendChild(l); segs.push(l);
+  /* =====================================================
+     MUSIC — plays your own file: music.mp3
+     ===================================================== */
+  const bgm = $('bgm');
+  let muted = false, fadeTimer = null, ac = null;
+  function startMusic(){
+    try {
+      bgm.volume = 0;
+      const pr = bgm.play();
+      const ok = () => {
+        $('mute').classList.add('show');
+        clearInterval(fadeTimer);
+        fadeTimer = setInterval(() => {
+          if (bgm.volume < .3) bgm.volume = Math.min(.3, bgm.volume + .01);
+          else clearInterval(fadeTimer);
+        }, 150);
+      };
+      if (pr && pr.then) pr.then(ok).catch(() => {}); else ok();
+    } catch (e) {}
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC && !ac) ac = new AC();
+    } catch (e) {}
   }
-  const starEls = pts.map((p, i) => {
-    const g = mk('g', {class: 'star' + (i === 0 ? ' next' : '')});
-    g.appendChild(mk('circle', {class: 'halo', cx: p[0], cy: p[1], r: 3.2}));
-    g.appendChild(mk('circle', {class: 'core', cx: p[0], cy: p[1], r: 1.5}));
-    g.appendChild(mk('circle', {cx: p[0], cy: p[1], r: 8, fill: 'transparent'}));
-    g.addEventListener('click', () => tapStar(i));
-    svg.appendChild(g);
-    return g;
+  bgm.addEventListener('error', () => { $('mute').classList.remove('show'); });
+  $('mute').addEventListener('click', () => {
+    muted = !muted; bgm.muted = muted;
+    $('mute').textContent = muted ? '🔇' : '🔊';
   });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) bgm.pause(); else if ($('mute').classList.contains('show') && !muted) bgm.play().catch(() => {});
+  });
+  function thump(){
+    if (!ac || muted) return;
+    const t = ac.currentTime;
+    [0, .2].forEach((d, i) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(i ? 55 : 70, t + d);
+      o.frequency.exponentialRampToValueAtTime(38, t + d + .16);
+      g.gain.setValueAtTime(0, t + d);
+      g.gain.linearRampToValueAtTime(i ? .12 : .18, t + d + .01);
+      g.gain.exponentialRampToValueAtTime(.001, t + d + .22);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t + d); o.stop(t + d + .3);
+    });
+  }
 
-  let step = 0;
-  function tapStar(i){
-    if (i !== step) return;
-    const el = starEls[i];
-    el.classList.remove('next'); el.classList.add('done');
-    const m = $('skyMsg');
-    m.textContent = skyMsgs[i];
-    m.classList.remove('pop'); void m.offsetWidth; m.classList.add('pop');
-    $('skyHint').textContent = '';
-    if (i > 0) segs[i - 1].classList.add('draw');
-    step++;
-    if (step < pts.length){
-      starEls[step].classList.add('next');
+  /* =====================================================
+     LOCK
+     ===================================================== */
+  const normDigits = s => s
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+    .replace(/\D/g, '');
+  const okDates = ['1042026', '10042026', '4102026', '04102026'];
+  let tries = 0;
+  function tryUnlock(){
+    const v = normDigits($('dateIn').value);
+    if (okDates.indexOf(v) !== -1){
+      startMusic();
+      $('lockMsg').textContent = 'ئافەرین! 💗';
+      setTimeout(() => { $('lock').classList.remove('active'); $('story').classList.add('active'); go(0); }, 800);
     } else {
-      segs[segs.length - 1].classList.add('draw');
-      setTimeout(() => $('heartFill').classList.add('show'), 600);
-      setTimeout(() => $('skyName').classList.add('show'), 1200);
-      setTimeout(() => { $('skyHint').textContent = 'ئەستێرەکان ناوی تۆیان نووسی 💫'; $('skyNext').hidden = false; $('skyNext').classList.add('fade-up'); }, 2200);
+      tries++;
+      const inp = $('dateIn');
+      inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+      $('lockMsg').textContent = tries >= 3 ? 'ڕێنمایی: ڕۆژی ١٠ / ٤ / ٢٠٢٦ 💗' : 'ئەو بەروارە لە بیرت نەچێت 😄 دووبارە هەوڵ بدەوە';
     }
   }
-  $('skyHint').textContent = 'ئەستێرە درەوشاوەکە بپەستێوە و بەردەوام بە';
-  $('skyNext').addEventListener('click', () => { show('book'); renderPage(0, 'next'); });
+  $('unlockBtn').addEventListener('click', tryUnlock);
+  $('dateIn').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
 
-  /* ---------- stage 2: storybook ---------- */
-  const pages = [
-    {cover: true, h: 'چیرۆکی ئێمە', t: 'سومەیە 💗 و من', s: 'دەستپێک: ٤/١٠/٢٠٢٦'},
-    {h: 'ڕۆژی ١٠ی نیسان', t: 'ڕۆژێکی ئاسایی دەچوو، بەڵام لەو ڕۆژەدا ناوی تۆم ناسی، و نەمدەزانی ئەم ناوە دەبێت بە بەشێک لە ژیانم.'},
-    {h: 'ڕۆژانی یەکەم', t: 'هەر قسەیەک، هەر پێکەنینێک و هەر چرکەیەک وای کرد زیاتر بمەوێت لێت نزیک بم.'},
-    {h: 'تا ئەمڕۆ', t: () => toKu(daysSince) + ' ڕۆژ بەسەر ئەو ڕۆژەدا تێپەڕیوە، و هیچ ڕۆژێک نییە بێ ئەوەی بیرم لە تۆ نەکردبێتەوە.'},
-    {h: 'تۆ کێیت بۆ من', t: 'تۆ ئارامی منیت لە کاتی ماندووبووندا، و هۆکاری بزەکانم لە کاتی خۆشیدا.'},
-    {h: 'چیرۆکەکە تەواو نەبووە', t: 'ئەمە تەنیا سەرەتایە. دەمەوێت بەشەکانی تری چیرۆکەکە لەگەڵ تۆ بنووسمەوە.'}
+  /* =====================================================
+     CARDS
+     ===================================================== */
+  const cards = [
+    {t: 'text', bg: 'wine', fx: 'dust', icon: '💌', title: true, hint: true,
+      lines: ['سومەیە...', 'ئەمە نامەیەکی بچووکە بۆ تۆ', 'کارت بە کارت، هێدی هێدی بیخوێنەوە']},
+    {t: 'bubble', bg: 'night', fx: 'stars',
+      msgs: ['سڵاو گیانەکەم 🌹', 'دەزانم ئێستا ئەمە دەخوێنیتەوە، و بزەیەک لەسەر لێوەکانتە 😌']},
+    {t: 'text', bg: 'plum', fx: 'petals',
+      lines: ['نامەوێت هەموو شتێک بە یەک جار بخوێنیتەوە', 'چونکە دەمەوێت *هێدی هێدی* بێت،', 'وەک ئەوەی لە تەنیشت یەک دانیشتبین']},
+    {t: 'text', bg: 'rose', fx: 'hearts', icon: '💗', title: true,
+      lines: ['ڕاستییەکەی بێ پەردە', 'من بە تەواوی *ئاشقی تۆ* بووم']},
+    {t: 'text', bg: 'emerald', fx: 'emerald', icon: '🌿', title: true,
+      lines: ['چاوە سەوزەکانت...', 'وەک دوو *زمرووتی* ڕووناکن', 'هەر کاتێک تێیان دەڕوانم، ون دەبم و ئارام دەبمەوە']},
+    {t: 'ask', bg: 'emerald', fx: 'emerald',
+      lines: ['ئێستا چاوە سەوزەکانت لەسەر ئەم شاشەیەن...', 'پێم بڵێ، بزەت هات؟ 😏'],
+      opts: ['بەڵێ 😊', 'نەخێر 🙄'],
+      reps: ['دەمزانی! بزەکەت جوانترین شتێکە دەیبینم 💗', 'راست ناکەیت 😄 من دەزانم بزەت هاتووە!']},
+    {t: 'text', bg: 'gold', fx: 'waves', icon: '✨', title: true,
+      lines: ['قژە نوێیەکەت', 'ئەو ڕەنگەی کە گۆڕیت لەسەر تۆ *زۆر جوانە*', 'هەرچەندە ڕاستییەکەی تۆ لەگەڵ هەر ڕەنگێک جوانیت 😄']},
+    {t: 'text', bg: 'gold', fx: 'waves',
+      lines: ['کاتێک با قژەکەت دەجووڵێنێت', '*دڵم* دەجووڵێت']},
+    {t: 'text', bg: 'rose', fx: 'petals', title: true,
+      lines: ['بزەکەت...', 'هەر کاتێک بزە دەکەیت دونیا بۆ ساتێک ڕادەوەستێت', 'و من لەو ساتەدا *هەزار جار* دەکەومە خۆشەویستیتەوە']},
+    {t: 'text', bg: 'wine', fx: 'dust', title: true,
+      lines: ['ئاڵوودەی تۆ بووم', 'بیرکردنەوە لە تۆ بووەتە بەشێک لە *هەناسەدانم*', 'ڕۆژەکانم بە ناوی تۆ دەست پێدەکەن و بە ناوی تۆ کۆتایی دێن']},
+    {t: 'text', bg: 'night', fx: 'stars', title: true,
+      lines: ['بەبێ تۆ ڕۆحم *ئاسوودە نییە*', 'ئەگەر نەتبینم شتێک لە ناخمدا کەمە', 'و ڕۆژەکە درێژ و بێ ڕەنگ دەبێت']},
+    {t: 'bubble', bg: 'night', fx: 'stars',
+      msgs: ['ئەگەر ئێستا دڵت کەمێک خۆشتر لێدەدات', 'ئەوە ئەو هەستانەن کە لە دڵی منەوە گەیشتوونەتە دڵی تۆ 😉💗']},
+    {t: 'text', bg: 'plum', fx: 'dust', title: true,
+      lines: ['دەنگت...', 'ئەو میوزیکەیە کە هەرگیز *ماندوو نابم* لە گوێگرتنی']},
+    {t: 'text', bg: 'rose', fx: 'hearts', title: true,
+      lines: ['کاتێک دەتبینم', 'دڵم بە شێوەیەک دەلەرزێت کە ناتوانم بیشارمەوە', 'چاوەکانم دەدرەوشێنەوە و ناخم پڕ دەبێت لە *خۆشی*']},
+    {t: 'text', bg: 'gold', fx: 'glow', icon: '🤲', title: true,
+      lines: ['*سوپاسی خودا* دەکەم', 'هەموو جارێک کە تۆ دەبینم', 'تۆ یەکێکیت لە جوانترین بەخششەکانی خودا بۆ من']},
+    {t: 'text', bg: 'gold', fx: 'glow',
+      lines: ['دەپارێمەوە ئەم نیعمەتە بۆم بمێنێتەوە', 'و تۆ هەمیشە *بەختەوەر*، ساغ و سەلامەت بیت', 'و دڵت هەرگیز نەشکێت']},
+    {t: 'text', bg: 'night', fx: 'stars', title: true,
+      lines: ['ئەگەر ژیان ڕێگایەکی درێژ بێت', 'دەمەوێت هەموو هەنگاوەکانی *لەگەڵ تۆ* بنێم']},
+    {t: 'text', bg: 'wine', fx: 'petals',
+      lines: ['بەڵێن دەدەم لە تەنیشتت بم', 'پارێزگاریت لێ بکەم', 'و بە هەموو توانایەکمەوە *بەختەوەرت* بکەم', 'لە ڕۆژانی خۆشیدا و لە ڕۆژانی سەختیشدا']},
+    {t: 'ask', bg: 'rose', fx: 'hearts',
+      lines: ['لە دڵتدا هەست دەکەیت...', 'کە ئەو کەسەی ئەم نامەیەی نووسیوە، *بە ڕاستی* ئاشقتە؟'],
+      opts: ['بەڵێ، هەست پێدەکەم 💗', 'زۆر زۆر ✨'],
+      reps: ['دەمزانی... بۆیە ئەو بزەیە لەسەر لێوتە 😊💗', 'منیش زۆر زۆر 🥹💗']},
+    {t: 'text', bg: 'plum', fx: 'dust', title: true,
+      lines: ['ئەگەر هەموو جوانییەکانی دونیا لە لایەک بن', 'و تۆ لە لایەکی تر', 'من *تۆ* هەڵدەبژێرم، هەموو جارێک']},
+    {t: 'bubble', bg: 'night', fx: 'stars',
+      msgs: ['دەزانم ئێستا نزیکە لە کۆتایی نامەکە', 'بەڵام نامەوێت ئەمە تەواو بێت... چونکە ئەمە تەنیا سەرەتایە 💫']},
+    {t: 'beat', bg: 'rose', fx: 'hearts'},
+    {t: 'end', bg: 'wine', fx: 'dust'}
   ];
-  let cur = 0;
-  const dots = $('dots');
-  pages.forEach(() => dots.appendChild(document.createElement('i')));
 
-  function renderPage(i, dir){
-    cur = i;
-    const p = pages[i], el = $('page');
-    el.className = 'page' + (p.cover ? ' cover' : '');
-    el.innerHTML = '';
-    const add = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; n.textContent = txt; el.appendChild(n); return n; };
-    add('div', 'orn', p.cover ? '💫' : '❦');
-    add('h2', '', p.h);
-    add('p', '', typeof p.t === 'function' ? p.t() : p.t);
-    if (p.s) add('p', 'soft', p.s);
-    if (!p.cover) add('div', 'pg', toKu(i) + ' / ' + toKu(pages.length - 1));
-    void el.offsetWidth;
-    el.classList.add(dir === 'prev' ? 'flip-prev' : 'flip-next');
-    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
-    $('prevBtn').style.visibility = i === 0 ? 'hidden' : 'visible';
-    $('nextBtn').textContent = i === pages.length - 1 ? 'بەردەوام بە 💌' : 'دواتر ›';
-  }
-  function nextPage(){
-    if (cur < pages.length - 1) renderPage(cur + 1, 'next');
-    else { show('quiz'); renderQuiz(); }
-  }
-  function prevPage(){ if (cur > 0) renderPage(cur - 1, 'prev'); }
-  $('nextBtn').addEventListener('click', nextPage);
-  $('prevBtn').addEventListener('click', prevPage);
-  // RTL swipe: left→right = next
-  let sx = null;
-  $('book').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, {passive: true});
-  $('book').addEventListener('touchend', e => {
-    if (sx === null) return;
-    const dx = e.changedTouches[0].clientX - sx; sx = null;
-    if (dx > 60) nextPage(); else if (dx < -60) prevPage();
-  }, {passive: true});
+  /* ---------- progress bars ---------- */
+  const bars = $('bars');
+  cards.forEach(() => { const i = document.createElement('i'); i.appendChild(document.createElement('b')); bars.appendChild(i); });
 
-  /* ---------- stage 3: quiz ---------- */
-  const quiz = [
-    {q: 'ڕەنگی دڵخوازت کامەیە؟', o: ['🌸 پەمەیی', '💙 شین', '❤️ سوور', '🖤 ڕەش'], r: 'ڕاستە! دەمزانی 😎'},
-    {q: 'کام خواردن زیاتر خۆشدەوێت؟', o: ['🍕 دۆڵمە', '🍚 بریانی', '🍰 شیرینی', '🍦 بەستەنی'], r: 'بێگومان! یەکسەر دەمزانی 🤭'},
-    {q: 'خەونی گەشتەکەت بۆ کوێیە؟', o: ['🌊 دەریا', '⛰️ مککە', '🌆 شاری گەورە', '🏡 گوندی ئارام'], r: 'ڕاستە! ئەمەشم دەزانی 😌'},
-    {q: 'کێ زیاتر خۆشی دەوێت؟', o: ['من 🙋‍♂️', 'تۆ 🙋‍♀️'], r: 'هەردووکمان وەک یەک 💕'}
-  ];
-  let qi = 0;
-  function renderQuiz(){
-    const item = quiz[qi];
-    $('quizProg').textContent = qi === 0
-      ? 'چەندت دەناسم؟ 😄 هەر وەڵامێک هەڵبژێریت ڕاستە 😉'
-      : 'پرسیاری ' + toKu(qi + 1) + ' لە ' + toKu(quiz.length);
-    $('quizQ').textContent = item.q;
-    $('quizRes').textContent = '';
-    $('quizNext').hidden = true;
-    const box = $('quizOpts'); box.innerHTML = '';
-    item.o.forEach(txt => {
-      const b = document.createElement('button');
-      b.className = 'opt'; b.textContent = txt;
+  /* ---------- helpers ---------- */
+  let cur = 0, seqTimers = [], finishFn = null, beatTimer = null, beatCount = 0;
+  const content = $('content');
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
+
+  function lineEl(text, cls, delay){
+    const d = el('div', 'ln' + (cls ? ' ' + cls : ''));
+    text.split('*').forEach((part, i) => {
+      if (!part) return;
+      if (i % 2) d.appendChild(el('em', '', part)); else d.appendChild(document.createTextNode(part));
+    });
+    d.style.animationDelay = delay + 's';
+    return d;
+  }
+  function clearSeq(){ seqTimers.forEach(clearTimeout); seqTimers = []; }
+
+  function buildText(c){
+    let d = .2;
+    if (c.icon){ const ic = el('div', 'icon', c.icon); ic.style.animationDelay = '0s,0s'; content.appendChild(ic); d = .6; }
+    c.lines.forEach((l, i) => { content.appendChild(lineEl(l, (c.title && i === 0) ? 'title' : '', d)); d += .75; });
+  }
+
+  function mkBub(m, instant){ const b = el('div', 'bub' + (instant ? ' now' : ''), m); return b; }
+  function buildBubble(c){
+    const who = el('div', 'who');
+    const av = el('div', 'av', 'د');
+    const info = el('div'); info.appendChild(el('b', '', 'دڵزار')); info.appendChild(el('small', '', '● ئێستا'));
+    who.appendChild(av); who.appendChild(info); content.appendChild(who);
+    const list = el('div', 'bubs'); content.appendChild(list);
+    let t = 700;
+    c.msgs.forEach((m, i) => {
+      let dots = null;
+      seqTimers.push(setTimeout(() => { dots = el('div', 'typing'); for (let k = 0; k < 3; k++) dots.appendChild(el('span')); list.appendChild(dots); }, t));
+      t += 800 + m.length * 12;
+      seqTimers.push(setTimeout(() => {
+        if (dots) dots.remove();
+        list.appendChild(mkBub(m));
+        if (i === c.msgs.length - 1) finishFn = null;
+      }, t));
+      t += 450;
+    });
+    finishFn = () => {
+      clearSeq(); list.innerHTML = '';
+      c.msgs.forEach(m => list.appendChild(mkBub(m, true)));
+      finishFn = null;
+    };
+  }
+
+  function buildAsk(c){
+    let d = .2;
+    c.lines.forEach((l, i) => { content.appendChild(lineEl(l, '', d)); d += .8; });
+    const box = el('div', 'opts'); box.style.animationDelay = (d + .3) + 's';
+    const replyBox = el('div');
+    c.opts.forEach((o, i) => {
+      const b = el('button', 'opt', o);
       b.addEventListener('click', () => {
-        [...box.children].forEach(x => { x.disabled = true; if (x !== b) x.classList.add('fade'); });
+        [...box.children].forEach(x => { x.disabled = true; });
         b.classList.add('chosen');
-        const r = $('quizRes'); r.textContent = item.r;
-        r.classList.remove('fade-up'); void r.offsetWidth; r.classList.add('fade-up');
-        $('quizNext').textContent = qi === quiz.length - 1 ? 'پرسیاری کۆتایی 💌' : 'دواتر';
-        $('quizNext').hidden = false;
+        replyBox.appendChild(lineEl(c.reps[i], 'reply', 0.1));
+        FX.burst();
+        if (navigator.vibrate) navigator.vibrate(40);
       });
       box.appendChild(b);
     });
+    content.appendChild(box); content.appendChild(replyBox);
   }
-  $('quizNext').addEventListener('click', () => {
-    if (qi < quiz.length - 1){ qi++; renderQuiz(); }
-    else show('ask');
-  });
 
-  /* ---------- stage 4: the question ---------- */
-  const yes = $('yesBtn'), no = $('noBtn');
-  const noTexts = ['نەخێر 😅', 'دڵنیایت؟ 🥺', 'تکایە سومەیە...', 'ناتگرم 😜', 'باشە بڵێ بەڵێ 💗'];
-  let dodges = 0;
-
-  function dodge(e){
-    if (e){ e.preventDefault && e.preventDefault(); }
-    dodges++;
-    no.textContent = noTexts[dodges % noTexts.length];
-    const scale = Math.min(1 + dodges * .08, 1.6);
-    yes.style.transform = 'scale(' + scale + ')';
-
-    const w = no.offsetWidth, h = no.offsetHeight;
-    const yr = yes.getBoundingClientRect();
-    let x, y, tries = 0;
-    do {
-      x = 12 + Math.random() * Math.max(10, innerWidth - w - 24);
-      y = 12 + Math.random() * Math.max(10, innerHeight - h - 24);
-      tries++;
-    } while (tries < 30 &&
-      x < yr.right + 20 && x + w > yr.left - 20 && y < yr.bottom + 20 && y + h > yr.top - 20);
-    no.classList.add('moving');
-    no.style.left = x + 'px';
-    no.style.top = y + 'px';
-  }
-  no.addEventListener('pointerenter', dodge);
-  no.addEventListener('pointerdown', dodge);
-  no.addEventListener('touchstart', dodge, {passive: false});
-  no.addEventListener('click', dodge);
-
-  yes.addEventListener('click', () => {
-    no.style.display = 'none';
-    $('askBox').style.display = 'none';
-    $('final').classList.add('show');
-    launchConfetti();
-  });
-
-  /* ---------- confetti ---------- */
-  function launchConfetti(){
-    const c = $('confetti'), ctx = c.getContext('2d');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const W = innerWidth, H = innerHeight;
-    c.width = W * dpr; c.height = H * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const emo = ['💗', '💖', '✨', '💍', '🌸', '💫'];
-    const ps = [];
-    let bursts = 0;
-    function burst(){
-      for (let i = 0; i < 40; i++){
-        ps.push({
-          x: Math.random() * W, y: -20 - Math.random() * H * .3,
-          vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3,
-          r: Math.random() * 6.28, vr: (Math.random() - .5) * .18,
-          s: 16 + Math.random() * 18, e: emo[Math.floor(Math.random() * emo.length)]
-        });
-      }
-      bursts++;
+  function buildBeat(c){
+    content.appendChild(lineEl('و دوا شت...', 'title', .2));
+    content.appendChild(lineEl('پەنجەت لەسەر دڵەکە *بهێڵەرەوە*', '', .9));
+    const box = el('div', 'heart-box'); box.id = 'heartBox'; box.style.opacity = 0; box.style.animation = 'lineIn 1.2s ease 1.5s forwards';
+    box.innerHTML = '<button class="beat-btn" id="beatBtn" aria-label="دڵ"><svg viewBox="0 0 32 29.6" aria-hidden="true"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9ab8"/><stop offset="1" stop-color="#d4245f"/></linearGradient></defs><path fill="url(#hg)" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></button>';
+    content.appendChild(box);
+    const txt = el('p', 'ln', ''); txt.id = 'beatText'; txt.style.animation = 'none'; txt.style.opacity = 1; content.appendChild(txt);
+    const cnt = el('div'); cnt.id = 'beatCount'; content.appendChild(cnt);
+    beatCount = 0;
+    const btn = $('beatBtn');
+    function beat(){
+      beatCount++; cnt.textContent = toKu(beatCount);
+      if (navigator.vibrate) navigator.vibrate([70, 70, 70]);
+      thump();
+      const rp = el('div', 'ripple'); box.appendChild(rp); setTimeout(() => rp.remove(), 1400);
     }
-    burst();
-    const timer = setInterval(() => { burst(); if (bursts >= 7) clearInterval(timer); }, 700);
-    (function loop(){
-      ctx.clearRect(0, 0, W, H);
-      for (let i = ps.length - 1; i >= 0; i--){
-        const p = ps[i];
-        p.x += p.vx; p.y += p.vy; p.r += p.vr;
-        if (p.y > H + 40){ ps.splice(i, 1); continue; }
-        ctx.save();
-        ctx.translate(p.x, p.y); ctx.rotate(p.r);
-        ctx.font = p.s + 'px serif'; ctx.textAlign = 'center';
-        ctx.fillText(p.e, 0, 0);
-        ctx.restore();
-      }
-      if (ps.length || bursts < 7) requestAnimationFrame(loop);
-      else ctx.clearRect(0, 0, W, H);
-    })();
+    function start(e){
+      if (e) e.preventDefault();
+      if (beatTimer) return;
+      btn.classList.add('on'); txt.textContent = 'ئەم دڵە تەنیا بۆ تۆ لێدەدات 💓';
+      beat(); beatTimer = setInterval(beat, 1000);
+    }
+    function stop(){
+      if (!beatTimer) return;
+      clearInterval(beatTimer); beatTimer = null; btn.classList.remove('on');
+      txt.textContent = beatCount >= 5 ? 'هەموو لێدانێک بۆ ناوی تۆیە 💗' : 'بیهێڵەرەوە تا زیاتر ببیستیت 💗';
+    }
+    btn.addEventListener('pointerdown', start);
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, stop));
+    btn.addEventListener('contextmenu', e => e.preventDefault());
   }
+
+  function buildEnd(c){
+    content.appendChild(el('div', 'icon', '💍'));
+    content.appendChild(lineEl('هەتا هەتایە ئاشقت', 'title', .5));
+    content.appendChild(lineEl('دڵزار 💗', '', 1.3));
+    const b = el('button', 'btn', 'دووبارە بیخوێنەوە');
+    b.style.opacity = 0; b.style.animation = 'lineIn 1s ease 2.4s forwards';
+    b.addEventListener('click', () => go(0));
+    content.appendChild(b);
+    FX.burst();
+  }
+
+  /* ---------- navigation ---------- */
+  function go(i){
+    cur = Math.max(0, Math.min(cards.length - 1, i));
+    clearSeq(); finishFn = null;
+    if (beatTimer){ clearInterval(beatTimer); beatTimer = null; }
+    const c = cards[cur];
+    [...bars.children].forEach((b, k) => b.classList.toggle('done', k <= cur));
+    setBg(c.bg); FX.setMode(c.fx);
+    content.innerHTML = '';
+    $('tapHint').hidden = !c.hint;
+    if (c.t === 'text') buildText(c);
+    else if (c.t === 'bubble') buildBubble(c);
+    else if (c.t === 'ask') buildAsk(c);
+    else if (c.t === 'beat') buildBeat(c);
+    else if (c.t === 'end') buildEnd(c);
+  }
+  function next(){
+    if (finishFn){ finishFn(); return; }
+    if (cur < cards.length - 1) go(cur + 1);
+  }
+  function prev(){ if (cur > 0) go(cur - 1); }
+  $('tapNext').addEventListener('click', next);
+  $('tapPrev').addEventListener('click', prev);
+  addEventListener('keydown', e => {
+    if (!$('story').classList.contains('active')) return;
+    if (e.key === 'ArrowLeft') next(); else if (e.key === 'ArrowRight') prev();
+  });
 })();
 </script>
 </body>
