@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0a1f">
+<title>بۆ سومەیە 💗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#ff7eb6;
+    --gold:#ffd9a0;
+    --violet:#9b6bff;
+    --text:#f6eefc;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{
+    background:radial-gradient(ellipse at 50% 0%,#2a1559 0%,#140c33 45%,#07061a 100%);
+    color:var(--text);
+    font-family:'Vazirmatn','Noto Naskh Arabic',Tahoma,sans-serif;
+    line-height:1.9;
+    overflow:hidden;
+    -webkit-user-select:none;user-select:none;
+  }
+  #bg,#confetti{position:fixed;inset:0;width:100%;height:100%}
+  #bg{z-index:0}
+  #confetti{z-index:50;pointer-events:none}
+
+  /* ---------- stages ---------- */
+  .stage{
+    position:fixed;inset:0;z-index:2;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:max(18px,env(safe-area-inset-top)) 20px max(18px,env(safe-area-inset-bottom));
+    text-align:center;overflow-y:auto;
+    opacity:0;visibility:hidden;
+    transition:opacity .9s ease,visibility .9s ease;
+  }
+  .stage.active{opacity:1;visibility:visible}
+
+  h1{font-size:clamp(2.2rem,10vw,3.4rem);margin:.15em 0;font-weight:800;line-height:1.5}
+  h2{font-size:clamp(1.3rem,5.5vw,1.8rem);margin:.2em 0;font-weight:800}
+  p{margin:.4em 0}
+  .soft{color:#d9c8f0;font-weight:300}
+  .glow-text{
+    background:linear-gradient(90deg,var(--gold),var(--rose),#c99bff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 14px rgba(255,126,182,.45));
+  }
+
+  .btn{
+    font-family:inherit;font-size:1.05rem;font-weight:600;color:#fff;
+    background:linear-gradient(135deg,#ff7eb6,#9b6bff);
+    border:none;border-radius:999px;padding:13px 34px;margin-top:18px;
+    box-shadow:0 8px 28px rgba(255,126,182,.35);
+    cursor:pointer;transition:transform .15s ease,box-shadow .2s ease;
+  }
+  .btn:active{transform:scale(.95)}
+  .btn.ghost{background:rgba(255,255,255,.09);box-shadow:none;border:1px solid rgba(255,255,255,.2)}
+  .btn[hidden]{display:none}
+
+  .float-heart{font-size:3.2rem;animation:floaty 3s ease-in-out infinite;filter:drop-shadow(0 0 18px rgba(255,126,182,.7))}
+  @keyframes floaty{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.08)}}
+
+  .fade-up{animation:fadeUp 1s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* ---------- sky ---------- */
+  .sky-title{font-size:1.15rem;color:var(--gold);letter-spacing:.02em;margin:0}
+  #skyHint{font-size:.9rem;color:#cdbbe8;margin:2px 0 0;min-height:1.8em}
+  #skyMsg{
+    min-height:5.4em;max-width:340px;display:flex;align-items:center;justify-content:center;
+    font-size:1.08rem;font-weight:400;color:#fff;padding:0 6px;
+  }
+  #skyMsg.pop{animation:fadeUp .6s ease both}
+  .sky-svg{width:min(90vw,44vh,400px);height:auto;aspect-ratio:1;overflow:visible;touch-action:manipulation}
+  .star .halo{fill:rgba(255,190,225,.22)}
+  .star .core{fill:#fff;transition:fill .4s}
+  .star.next .halo{animation:pulse 1.3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+  .star.done .core{fill:var(--gold)}
+  .star.done .halo{fill:rgba(255,217,160,.3)}
+  .star{cursor:pointer}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(2.3);opacity:1}}
+  .seg{stroke:#ffc2e2;stroke-width:.7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .7s ease;filter:drop-shadow(0 0 1.5px #ff7eb6)}
+  .seg.draw{stroke-dashoffset:0}
+  #heartFill{fill:rgba(255,126,182,.14);opacity:0;transition:opacity 1.6s ease}
+  #heartFill.show{opacity:1}
+  #skyName{font-size:clamp(2.2rem,11vw,3.3rem);font-weight:800;opacity:0;transition:opacity 1.6s ease;margin:0;line-height:1.4}
+  #skyName.show{opacity:1}
+
+  /* ---------- book ---------- */
+  .book-wrap{perspective:1400px;width:min(90vw,380px)}
+  .page{
+    min-height:min(56vh,430px);
+    background:linear-gradient(160deg,#fff7ee,#f7e7da);
+    color:#3d2650;border-radius:8px 20px 20px 8px;
+    box-shadow:0 18px 50px rgba(0,0,0,.5),inset 6px 0 14px rgba(120,70,60,.12);
+    padding:28px 24px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transform-origin:right center;
+    border-right:6px solid #c9507f;
+  }
+  .page.flip-next{animation:flipNext .6s cubic-bezier(.3,.7,.3,1) both}
+  .page.flip-prev{animation:flipPrev .6s cubic-bezier(.3,.7,.3,1) both}
+  @keyframes flipNext{from{transform:rotateY(-80deg);opacity:0}to{transform:rotateY(0);opacity:1}}
+  @keyframes flipPrev{from{transform:rotateY(80deg);opacity:0}to{transform:rotateY(0);opacity:1}}
+  .page h2{color:#b83b6e;margin:.1em 0 .3em}
+  .page p{font-size:1.05rem;line-height:2.05;color:#4a3258}
+  .page .orn{font-size:1.6rem;color:#d96a98}
+  .page .pg{margin-top:auto;padding-top:16px;font-size:.8rem;color:#a58bb3}
+  .page.cover{background:linear-gradient(160deg,#8d2f63,#4b2a86);color:#fff;border-right-color:var(--gold)}
+  .page.cover h2{color:var(--gold);font-size:clamp(1.8rem,8vw,2.4rem)}
+  .page.cover p{color:#fbe9ff}
+  .book-ctrl{display:flex;align-items:center;gap:12px;margin-top:18px}
+  .book-ctrl .btn{margin-top:0;padding:11px 24px;font-size:.98rem}
+  .dots{display:flex;gap:7px;justify-content:center;margin-top:14px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);transition:.3s}
+  .dots i.on{background:var(--rose);transform:scale(1.35)}
+
+  /* ---------- quiz ---------- */
+  .card{
+    width:min(92vw,400px);background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.16);border-radius:26px;padding:26px 20px;
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    box-shadow:0 16px 50px rgba(0,0,0,.35);
+  }
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .opt{
+    font-family:inherit;font-size:1rem;color:#fff;background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:13px 8px;cursor:pointer;
+    transition:transform .15s,background .25s;
+  }
+  .opt:active{transform:scale(.96)}
+  .opt:disabled{cursor:default}
+  .opt.chosen{background:linear-gradient(135deg,#ff7eb6,#9b6bff);border-color:transparent}
+  .opt.fade{opacity:.35}
+  #quizRes{min-height:3.2em;margin-top:14px;color:var(--gold);font-weight:600}
+  .progress{font-size:.85rem;color:#cdbbe8}
+
+  /* ---------- ask ---------- */
+  .ask-q{font-size:clamp(1.45rem,6.4vw,2rem);font-weight:800;line-height:1.8;margin:.2em 0 .1em}
+  .ask-btns{display:flex;gap:16px;justify-content:center;align-items:center;margin-top:26px;min-height:70px}
+  .ask-btns .btn{margin-top:0}
+  #yesBtn{font-size:1.2rem;padding:14px 38px;transition:transform .3s ease;background:linear-gradient(135deg,#ff5fa0,#ffb36b)}
+  #noBtn{background:rgba(255,255,255,.12);box-shadow:none;border:1px solid rgba(255,255,255,.25);touch-action:none;z-index:20}
+  #noBtn.moving{position:fixed;transition:left .25s ease,top .25s ease}
+  #final{display:none}
+  #final.show{display:block;animation:fadeUp 1.2s ease both}
+  .ring{font-size:4rem;animation:floaty 2.6s ease-in-out infinite}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<canvas id="confetti"></canvas>
+
+<!-- ============ 0. INTRO ============ -->
+<section class="stage active" id="intro">
+  <div class="float-heart">💫</div>
+  <p class="soft fade-up" style="animation-delay:.3s">شتێکی بچووکم ئامادە کردووە بۆ دڵیخۆم</p>
+  <h1 class="glow-text fade-up" style="animation-delay:.7s">سومەیە</h1>
+  <p class="soft fade-up" style="animation-delay:1.1s;max-width:300px">بە دڵێکی پڕ لە خۆشەویستی، تەنیا بۆ تۆ.</p>
+  <button class="btn fade-up" style="animation-delay:1.6s" id="startBtn">دەست پێبکە ✨</button>
+</section>
+
+<!-- ============ 1. SKY ============ -->
+<section class="stage" id="sky">
+  <p class="sky-title">ئاسمانی ئێمە</p>
+  <p id="skyHint">ئەستێرە درەوشاوەکان بە ڕیز بپەستێوە و بیانبەستەوە</p>
+  <div id="skyMsg"></div>
+  <svg class="sky-svg" id="skySvg" viewBox="0 0 100 100" aria-label="ئاسمانی ئەستێرەکان"></svg>
+  <h2 id="skyName" class="glow-text">سومەیە</h2>
+  <button class="btn" id="skyNext" hidden>بەردەوام بە 📖</button>
+</section>
+
+<!-- ============ 2. BOOK ============ -->
+<section class="stage" id="book">
+  <div class="book-wrap"><div class="page" id="page"></div></div>
+  <div class="dots" id="dots"></div>
+  <div class="book-ctrl">
+    <button class="btn ghost" id="prevBtn">‹ پێشوو</button>
+    <button class="btn" id="nextBtn">دواتر ›</button>
+  </div>
+</section>
+
+<!-- ============ 3. QUIZ ============ -->
+<section class="stage" id="quiz">
+  <div class="card" id="quizCard">
+    <div class="progress" id="quizProg"></div>
+    <h2 id="quizQ"></h2>
+    <div class="opts" id="quizOpts"></div>
+    <div id="quizRes"></div>
+    <button class="btn" id="quizNext" hidden>دواتر</button>
+  </div>
+</section>
+
+<!-- ============ 4. ASK ============ -->
+<section class="stage" id="ask">
+  <div id="askBox">
+    <div class="float-heart">💍</div>
+    <p class="soft">پرسیارێکی کۆتایی...</p>
+    <div class="ask-q glow-text">سومەیە، ئایا قبوڵ دەکەیت ببیت بە دەستگیرانم؟</div>
+    <div class="ask-btns" id="askBtns">
+      <button class="btn" id="yesBtn">بەڵێ 💗</button>
+      <button class="btn" id="noBtn">نەخێر 😅</button>
+    </div>
+  </div>
+  <div id="final">
+    <div class="ring">💍</div>
+    <h1 class="glow-text">  سوپاس سومەیە گیان💗</h1>
+    <p style="max-width:320px;margin-inline:auto">ئەمڕۆ خۆشحاڵترین مرۆڤی ئەم دونیایەم. ئەوەی لە ٤/١٠/٢٠٢٦ دەستی پێکرد، ئێستا بووە بە بەڵێنێک.</p>
+    <p class="soft" style="margin-top:18px">📸 وێنەی ئەم شاشەیە بگرە و بۆمی بنێرە</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- helpers ---------- */
+  const $ = id => document.getElementById(id);
+  const toKu = v => String(v).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+  const MEET = new Date(2026, 3, 10); // 10 April 2026
+  const daysSince = Math.max(0, Math.floor((Date.now() - MEET.getTime()) / 86400000));
+
+  function show(id){
+    document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+    $(id).classList.add('active');
+    $(id).scrollTop = 0;
+  }
+
+  /* ---------- starfield background ---------- */
+  (function(){
+    const c = $('bg'), ctx = c.getContext('2d');
+    let W, H, stars = [], shoot = null;
+    function resize(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight;
+      c.width = W * dpr; c.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.round(W * H / 6500);
+      stars = Array.from({length: n}, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.3 + .2,
+        p: Math.random() * 6.28, s: .6 + Math.random() * 1.6
+      }));
+    }
+    function frame(t){
+      ctx.clearRect(0, 0, W, H);
+      for (const s of stars){
+        const a = .35 + .65 * Math.abs(Math.sin(t / 1000 * s.s + s.p));
+        ctx.globalAlpha = a;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
+      }
+      if (!shoot && Math.random() < .004){
+        shoot = {x: Math.random() * W, y: Math.random() * H * .4, l: 0};
+      }
+      if (shoot){
+        shoot.x -= 9; shoot.y += 5; shoot.l++;
+        ctx.globalAlpha = Math.max(0, 1 - shoot.l / 30);
+        ctx.strokeStyle = '#ffd9f0'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(shoot.x, shoot.y); ctx.lineTo(shoot.x + 40, shoot.y - 22); ctx.stroke();
+        if (shoot.l > 30) shoot = null;
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(frame);
+    }
+    addEventListener('resize', resize);
+    resize(); requestAnimationFrame(frame);
+  })();
+
+  /* ---------- stage 0 → 1 ---------- */
+  $('startBtn').addEventListener('click', () => { show('sky'); });
+
+  /* ---------- stage 1: constellation heart ---------- */
+  const skyMsgs = [
+    '٤/١٠/٢٠٢٦ — یەکەم جار یەکترمان ناسی ✨',
+    'یەکەم قسەمان، و هەر لەو ساتەوە شتێک گۆڕا.',
+    'هەر ڕۆژێک زیاتر دەتناسم، و زیاتر خۆشم دەوێیت.',
+    'بزەکەت ڕۆژەکانمی ڕووناک کردەوە.',
+    'لەگەڵ تۆ دونیا هێمنتر و جوانترە.',
+    'هەموو خەونەکانم ناوی تۆیان تێدایە.',
+    'دەمەوێت هەموو ڕۆژەکانی ژیانم لە تەنیشت تۆ بن.',
+    'ئەمە دڵی منە، و تەواو بۆ تۆیە 💗'
+  ];
+  const T = [0, .9, 1.8, 2.6, Math.PI, 2*Math.PI - 2.6, 2*Math.PI - 1.8, 2*Math.PI - .9];
+  const pts = T.map(t => {
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = 13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
+    return [50 + x * 2.6, 40 - y * 2.1];
+  });
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('skySvg');
+  const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+  const fill = mk('polygon', {id: 'heartFill', points: pts.map(p => p.join(',')).join(' ')});
+  svg.appendChild(fill);
+  const segs = [];
+  for (let i = 0; i < pts.length; i++){
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    const l = mk('line', {x1: a[0], y1: a[1], x2: b[0], y2: b[1], pathLength: 1, class: 'seg'});
+    svg.appendChild(l); segs.push(l);
+  }
+  const starEls = pts.map((p, i) => {
+    const g = mk('g', {class: 'star' + (i === 0 ? ' next' : '')});
+    g.appendChild(mk('circle', {class: 'halo', cx: p[0], cy: p[1], r: 3.2}));
+    g.appendChild(mk('circle', {class: 'core', cx: p[0], cy: p[1], r: 1.5}));
+    g.appendChild(mk('circle', {cx: p[0], cy: p[1], r: 8, fill: 'transparent'}));
+    g.addEventListener('click', () => tapStar(i));
+    svg.appendChild(g);
+    return g;
+  });
+
+  let step = 0;
+  function tapStar(i){
+    if (i !== step) return;
+    const el = starEls[i];
+    el.classList.remove('next'); el.classList.add('done');
+    const m = $('skyMsg');
+    m.textContent = skyMsgs[i];
+    m.classList.remove('pop'); void m.offsetWidth; m.classList.add('pop');
+    $('skyHint').textContent = '';
+    if (i > 0) segs[i - 1].classList.add('draw');
+    step++;
+    if (step < pts.length){
+      starEls[step].classList.add('next');
+    } else {
+      segs[segs.length - 1].classList.add('draw');
+      setTimeout(() => $('heartFill').classList.add('show'), 600);
+      setTimeout(() => $('skyName').classList.add('show'), 1200);
+      setTimeout(() => { $('skyHint').textContent = 'ئەستێرەکان ناوی تۆیان نووسی 💫'; $('skyNext').hidden = false; $('skyNext').classList.add('fade-up'); }, 2200);
+    }
+  }
+  $('skyHint').textContent = 'ئەستێرە درەوشاوەکە بپەستێوە و بەردەوام بە';
+  $('skyNext').addEventListener('click', () => { show('book'); renderPage(0, 'next'); });
+
+  /* ---------- stage 2: storybook ---------- */
+  const pages = [
+    {cover: true, h: 'چیرۆکی ئێمە', t: 'سومەیە 💗 و من', s: 'دەستپێک: ٤/١٠/٢٠٢٦'},
+    {h: 'ڕۆژی ١٠ی نیسان', t: 'ڕۆژێکی ئاسایی دەچوو، بەڵام لەو ڕۆژەدا ناوی تۆم ناسی، و نەمدەزانی ئەم ناوە دەبێت بە بەشێک لە ژیانم.'},
+    {h: 'ڕۆژانی یەکەم', t: 'هەر قسەیەک، هەر پێکەنینێک و هەر چرکەیەک وای کرد زیاتر بمەوێت لێت نزیک بم.'},
+    {h: 'تا ئەمڕۆ', t: () => toKu(daysSince) + ' ڕۆژ بەسەر ئەو ڕۆژەدا تێپەڕیوە، و هیچ ڕۆژێک نییە بێ ئەوەی بیرم لە تۆ نەکردبێتەوە.'},
+    {h: 'تۆ کێیت بۆ من', t: 'تۆ ئارامی منیت لە کاتی ماندووبووندا، و هۆکاری بزەکانم لە کاتی خۆشیدا.'},
+    {h: 'چیرۆکەکە تەواو نەبووە', t: 'ئەمە تەنیا سەرەتایە. دەمەوێت بەشەکانی تری چیرۆکەکە لەگەڵ تۆ بنووسمەوە.'}
+  ];
+  let cur = 0;
+  const dots = $('dots');
+  pages.forEach(() => dots.appendChild(document.createElement('i')));
+
+  function renderPage(i, dir){
+    cur = i;
+    const p = pages[i], el = $('page');
+    el.className = 'page' + (p.cover ? ' cover' : '');
+    el.innerHTML = '';
+    const add = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; n.textContent = txt; el.appendChild(n); return n; };
+    add('div', 'orn', p.cover ? '💫' : '❦');
+    add('h2', '', p.h);
+    add('p', '', typeof p.t === 'function' ? p.t() : p.t);
+    if (p.s) add('p', 'soft', p.s);
+    if (!p.cover) add('div', 'pg', toKu(i) + ' / ' + toKu(pages.length - 1));
+    void el.offsetWidth;
+    el.classList.add(dir === 'prev' ? 'flip-prev' : 'flip-next');
+    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+    $('prevBtn').style.visibility = i === 0 ? 'hidden' : 'visible';
+    $('nextBtn').textContent = i === pages.length - 1 ? 'بەردەوام بە 💌' : 'دواتر ›';
+  }
+  function nextPage(){
+    if (cur < pages.length - 1) renderPage(cur + 1, 'next');
+    else { show('quiz'); renderQuiz(); }
+  }
+  function prevPage(){ if (cur > 0) renderPage(cur - 1, 'prev'); }
+  $('nextBtn').addEventListener('click', nextPage);
+  $('prevBtn').addEventListener('click', prevPage);
+  // RTL swipe: left→right = next
+  let sx = null;
+  $('book').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, {passive: true});
+  $('book').addEventListener('touchend', e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx; sx = null;
+    if (dx > 60) nextPage(); else if (dx < -60) prevPage();
+  }, {passive: true});
+
+  /* ---------- stage 3: quiz ---------- */
+  const quiz = [
+    {q: 'ڕەنگی دڵخوازت کامەیە؟', o: ['🌸 پەمەیی', '💙 شین', '❤️ سوور', '🖤 ڕەش'], r: 'ڕاستە! دەمزانی 😎'},
+    {q: 'کام خواردن زیاتر خۆشدەوێت؟', o: ['🍕 دۆڵمە', '🍚 بریانی', '🍰 شیرینی', '🍦 بەستەنی'], r: 'بێگومان! یەکسەر دەمزانی 🤭'},
+    {q: 'خەونی گەشتەکەت بۆ کوێیە؟', o: ['🌊 دەریا', '⛰️ مککە', '🌆 شاری گەورە', '🏡 گوندی ئارام'], r: 'ڕاستە! ئەمەشم دەزانی 😌'},
+    {q: 'کێ زیاتر خۆشی دەوێت؟', o: ['من 🙋‍♂️', 'تۆ 🙋‍♀️'], r: 'هەردووکمان وەک یەک 💕'}
+  ];
+  let qi = 0;
+  function renderQuiz(){
+    const item = quiz[qi];
+    $('quizProg').textContent = qi === 0
+      ? 'چەندت دەناسم؟ 😄 هەر وەڵامێک هەڵبژێریت ڕاستە 😉'
+      : 'پرسیاری ' + toKu(qi + 1) + ' لە ' + toKu(quiz.length);
+    $('quizQ').textContent = item.q;
+    $('quizRes').textContent = '';
+    $('quizNext').hidden = true;
+    const box = $('quizOpts'); box.innerHTML = '';
+    item.o.forEach(txt => {
+      const b = document.createElement('button');
+      b.className = 'opt'; b.textContent = txt;
+      b.addEventListener('click', () => {
+        [...box.children].forEach(x => { x.disabled = true; if (x !== b) x.classList.add('fade'); });
+        b.classList.add('chosen');
+        const r = $('quizRes'); r.textContent = item.r;
+        r.classList.remove('fade-up'); void r.offsetWidth; r.classList.add('fade-up');
+        $('quizNext').textContent = qi === quiz.length - 1 ? 'پرسیاری کۆتایی 💌' : 'دواتر';
+        $('quizNext').hidden = false;
+      });
+      box.appendChild(b);
+    });
+  }
+  $('quizNext').addEventListener('click', () => {
+    if (qi < quiz.length - 1){ qi++; renderQuiz(); }
+    else show('ask');
+  });
+
+  /* ---------- stage 4: the question ---------- */
+  const yes = $('yesBtn'), no = $('noBtn');
+  const noTexts = ['نەخێر 😅', 'دڵنیایت؟ 🥺', 'تکایە سومەیە...', 'ناتگرم 😜', 'باشە بڵێ بەڵێ 💗'];
+  let dodges = 0;
+
+  function dodge(e){
+    if (e){ e.preventDefault && e.preventDefault(); }
+    dodges++;
+    no.textContent = noTexts[dodges % noTexts.length];
+    const scale = Math.min(1 + dodges * .08, 1.6);
+    yes.style.transform = 'scale(' + scale + ')';
+
+    const w = no.offsetWidth, h = no.offsetHeight;
+    const yr = yes.getBoundingClientRect();
+    let x, y, tries = 0;
+    do {
+      x = 12 + Math.random() * Math.max(10, innerWidth - w - 24);
+      y = 12 + Math.random() * Math.max(10, innerHeight - h - 24);
+      tries++;
+    } while (tries < 30 &&
+      x < yr.right + 20 && x + w > yr.left - 20 && y < yr.bottom + 20 && y + h > yr.top - 20);
+    no.classList.add('moving');
+    no.style.left = x + 'px';
+    no.style.top = y + 'px';
+  }
+  no.addEventListener('pointerenter', dodge);
+  no.addEventListener('pointerdown', dodge);
+  no.addEventListener('touchstart', dodge, {passive: false});
+  no.addEventListener('click', dodge);
+
+  yes.addEventListener('click', () => {
+    no.style.display = 'none';
+    $('askBox').style.display = 'none';
+    $('final').classList.add('show');
+    launchConfetti();
+  });
+
+  /* ---------- confetti ---------- */
+  function launchConfetti(){
+    const c = $('confetti'), ctx = c.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = innerWidth, H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const emo = ['💗', '💖', '✨', '💍', '🌸', '💫'];
+    const ps = [];
+    let bursts = 0;
+    function burst(){
+      for (let i = 0; i < 40; i++){
+        ps.push({
+          x: Math.random() * W, y: -20 - Math.random() * H * .3,
+          vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3,
+          r: Math.random() * 6.28, vr: (Math.random() - .5) * .18,
+          s: 16 + Math.random() * 18, e: emo[Math.floor(Math.random() * emo.length)]
+        });
+      }
+      bursts++;
+    }
+    burst();
+    const timer = setInterval(() => { burst(); if (bursts >= 7) clearInterval(timer); }, 700);
+    (function loop(){
+      ctx.clearRect(0, 0, W, H);
+      for (let i = ps.length - 1; i >= 0; i--){
+        const p = ps[i];
+        p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        if (p.y > H + 40){ ps.splice(i, 1); continue; }
+        ctx.save();
+        ctx.translate(p.x, p.y); ctx.rotate(p.r);
+        ctx.font = p.s + 'px serif'; ctx.textAlign = 'center';
+        ctx.fillText(p.e, 0, 0);
+        ctx.restore();
+      }
+      if (ps.length || bursts < 7) requestAnimationFrame(loop);
+      else ctx.clearRect(0, 0, W, H);
+    })();
+  }
+})();
+</script>
+</body>
+</html>

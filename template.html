@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a0a1e">
+<title>قالبی بابەتی نوێ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#f6c870;--cream:#fff1dc}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%}
+  body{
+    background:linear-gradient(165deg,#2a0a1e 0%,#4d1030 55%,#7a1b45 100%) fixed;color:var(--cream);
+    font-family:'Amiri','Vazirmatn','Noto Naskh Arabic',Tahoma,serif;line-height:1.9;overflow-x:hidden;
+  }
+  #fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:2;max-width:560px;margin:0 auto;padding:max(64px,calc(env(safe-area-inset-top) + 52px)) 20px 80px;text-align:center}
+  .em{font-size:3rem}
+  h1{font-size:clamp(1.9rem,8.4vw,2.7rem);margin:.1em 0 .2em;color:var(--gold);line-height:1.6}
+  .date{font-family:'Vazirmatn',sans-serif;font-size:.85rem;color:#ffe2a1;margin-bottom:26px}
+  .ln{
+    font-size:clamp(1.3rem,5.8vw,1.75rem);line-height:2.15;margin:0 0 .9em;
+    opacity:0;transform:translateY(16px);filter:blur(5px);transition:opacity 1.1s ease,transform 1.1s ease,filter 1.1s ease;
+  }
+  .ln.vis{opacity:1;transform:none;filter:none}
+  .ln em{font-style:normal;color:var(--gold);font-weight:700;text-shadow:0 0 14px rgba(246,200,112,.55)}
+  .sign{font-size:1.5rem;color:var(--gold);margin-top:34px}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+  <div class="em" id="em"></div>
+  <h1 id="title"></h1>
+  <div class="date" id="date"></div>
+  <div id="lines"></div>
+  <div class="sign" id="sign"></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+
+  /* =========================================================
+     ✍️  ئەمە قالبی بابەتی نوێیە. تەنیا ئەم بەشە بگۆڕە:
+     ١. فایلەکە کۆپی بکە و ناوی بکە (نموونە: day5.html)
+     ٢. EMOJI، TITLE، DATE، LINES و SIGN بگۆڕە
+        لە ناو LINES، وشە گرنگەکان بکە ناو دوو ئەستێرە: *وشە*
+     ٣. لە index.html دێڕێکی نوێ بۆ ئەم فایلە زیاد بکە
+     ========================================================= */
+  const EMOJI = '💌';
+  const TITLE = 'ناونیشانی بابەتەکە';
+  const DATE  = 'بەرواری ئەمڕۆ';
+  const LINES = [
+    'ڕستەی یەکەم لێرە بنووسە...',
+    'ڕستەی دووەم، و وشەیەکی *گرنگ* بە ئەستێرە دیار بکە',
+    'هەرچەندە ڕستە زیاد بکەیت، هەموویان هێدی هێدی دەردەکەون'
+  ];
+  const SIGN = 'دڵزار 💗';
+  /* ========================================================= */
+
+  $('em').textContent = EMOJI; $('title').textContent = TITLE; $('date').textContent = DATE; $('sign').textContent = SIGN;
+  const box = $('lines'), nodes = [];
+  LINES.forEach(t => {
+    const d = document.createElement('div'); d.className = 'ln';
+    t.split('*').forEach((p, i) => {
+      if (!p) return;
+      if (i % 2){ const e = document.createElement('em'); e.textContent = p; d.appendChild(e); } else d.appendChild(document.createTextNode(p));
+    });
+    box.appendChild(d); nodes.push(d);
+  });
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); } }), {threshold: .2});
+    nodes.forEach(n => io.observe(n));
+  } else nodes.forEach(n => n.classList.add('vis'));
+
+  (function(){
+    const cv = $('fx'), g = cv.getContext('2d'); let W, H, ps = [];
+    function resize(){
+      const dpr = Math.min(devicePixelRatio || 1, 1.75); W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ps = Array.from({length: 55}, () => ({x: Math.random() * W, y: Math.random() * H, r: .6 + Math.random() * 1.8, vy: .15 + Math.random() * .5, ph: Math.random() * 6.28}));
+    }
+    function frame(){
+      g.clearRect(0, 0, W, H);
+      for (const q of ps){
+        q.ph += .02; q.y -= q.vy; q.x += Math.sin(q.ph) * .25;
+        if (q.y < -10){ q.y = H + 10; q.x = Math.random() * W; }
+        g.fillStyle = 'rgba(255,225,160,' + (.2 + .55 * Math.abs(Math.sin(q.ph))) + ')';
+        g.beginPath(); g.arc(q.x, q.y, q.r, 0, 6.283); g.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    addEventListener('resize', resize); resize(); requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>

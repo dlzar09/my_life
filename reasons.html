@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8a1f4c">
+<title>هۆکارێک بۆ خۆشویستنت 💗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#f6c870;--cream:#fff1dc}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%}
+  body{
+    background:linear-gradient(165deg,#3a0a22 0%,#8a1f4c 55%,#c9456f 100%) fixed;color:var(--cream);
+    font-family:'Amiri','Vazirmatn','Noto Naskh Arabic',Tahoma,serif;line-height:1.9;overflow-x:hidden;
+  }
+  #fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:2;max-width:560px;margin:0 auto;padding:max(58px,calc(env(safe-area-inset-top) + 48px)) 18px 60px;text-align:center}
+  h1{font-size:clamp(1.9rem,8vw,2.6rem);margin:.1em 0;color:var(--gold);line-height:1.6}
+  .sub{font-family:'Vazirmatn',sans-serif;font-weight:300;font-size:.92rem;color:#ffe2d6;margin:0}
+
+  .prog{margin:18px auto 6px;max-width:340px}
+  .prog .t{font-family:'Vazirmatn',sans-serif;font-size:.9rem;color:#ffe2a1;margin-bottom:6px}
+  .bar{height:8px;border-radius:8px;background:rgba(255,255,255,.2);overflow:hidden}
+  .bar b{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#ffe2a1,#ff7aa0);transition:width 1.6s ease}
+
+  .today{
+    margin:26px 0 8px;padding:26px 20px;border-radius:26px;
+    background:rgba(255,255,255,.1);border:1px solid rgba(246,200,112,.6);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 16px 44px rgba(0,0,0,.35);
+    opacity:0;animation:up 1s ease .3s forwards;
+  }
+  .today .lab{font-family:'Vazirmatn',sans-serif;font-size:.82rem;color:#3a1220;background:linear-gradient(135deg,#ffe2a1,#f1b255);display:inline-block;padding:2px 14px;border-radius:999px;font-weight:700}
+  .today .no{font-size:3.2rem;font-weight:700;color:var(--gold);line-height:1.3;margin-top:6px;text-shadow:0 0 22px rgba(246,200,112,.55)}
+  .today .tx{font-size:clamp(1.3rem,5.6vw,1.7rem);line-height:2.1}
+
+  h2{font-size:1.2rem;color:var(--gold);margin:30px 0 10px;font-weight:700}
+  .list{display:flex;flex-direction:column;gap:12px;text-align:right}
+  .r{
+    display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:20px;
+    background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);
+    opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;
+  }
+  .r.vis{opacity:1;transform:none}
+  .r .n{flex:none;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ffe2a1,#d9893a);color:#4a1a2a;font-family:'Vazirmatn',sans-serif;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+  .r .x{font-size:1.2rem;line-height:2}
+  .empty{font-family:'Vazirmatn',sans-serif;font-weight:300;color:#ffe2d6;margin-top:10px}
+  .foot{margin-top:34px;font-family:'Vazirmatn',sans-serif;font-weight:300;font-size:.9rem;color:#ffe2d6}
+  @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+  <div style="font-size:2.6rem">💗</div>
+  <h1>هۆکارێک بۆ خۆشویستنت</h1>
+  <p class="sub">هەر ڕۆژێک هۆکارێکی نوێ... هەتا بگەین بە ١٠٠</p>
+
+  <div class="prog"><div class="t" id="pt"></div><div class="bar"><b id="pb"></b></div></div>
+
+  <div class="today" id="today"></div>
+
+  <h2 id="prevH" hidden>هۆکارەکانی پێشوو</h2>
+  <div class="list" id="list"></div>
+
+  <p class="foot">هۆکاری نوێ هەر ڕۆژێک دێت 💗</p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const toKu = v => String(v).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+  /* =========================================================
+     ✍️  هۆکاری نوێ لێرە زیاد بکە
+     لە کۆتایی لیستەکە، دێڕێکی نوێ بنووسە (لەنێو '  ' و کۆمای کۆتایی).
+     دوا هۆکار دەبێتە «هۆکاری ئەمڕۆ»، و ژمارەکان خۆکارانە دەنووسرێن.
+     ========================================================= */
+  const TARGET = 100;
+  const REASONS = [
+    'چونکە هەموو بەیانییەک تۆ یەکەم کەسیت کە دەڵێیت «بەیانیت باش»، و ڕۆژەکەم بەو وشەیە دەست پێدەکات.',
+    'چونکە کاتێک پێدەکەنیت، هەموو شتێکی دەوروبەرم جوانتر دەبێت و دڵم خۆش دەبێت.',
+    'چونکە هەمیشە تۆ دەست پێشخەریت لە ناردنی نامە، و وا هەست دەکەم بیرم دەکەیتەوە.',
+    'چونکە لە نیوەڕۆدا دەپرسیت «چیت خوارد؟ تێر بوویت؟»، و ئەوە جوانترین شێوەی گرنگیپێدانە.',
+    'چونکە هەموو ڕۆژێک خواردن ئامادە دەکەیت و دەڵێیت «وەرە بخۆ». هەرچەندە ناتوانم بێم، دەزانم ئەوە لە دڵێکی گەورەوە دێت.',
+    'چونکە دەچیتە بەر خۆر بۆ ئەوەی ڤیتامین وەربگریت، و لەو کاتەدا بە تەلەفۆن لەگەڵ منیت.',
+    'چونکە کاتێک دیسان دەچمە حەمام، بە خۆشەویستییەوە دەڵێیت «هەی هەتیم» 😂',
+    'چونکە چاوە سەوزەکانت ئارامم دەکەنەوە، و هەر کاتێک تێیان دەڕوانم ون دەبم.'
+  ];
+  /* ========================================================= */
+
+  const n = REASONS.length;
+  $('pt').textContent = toKu(n) + ' هۆکار لە ' + toKu(TARGET);
+  setTimeout(() => { $('pb').style.width = Math.min(100, n / TARGET * 100) + '%'; }, 300);
+
+  const t = $('today');
+  if (!n){
+    t.innerHTML = '<p class="empty">هۆکاری یەکەم بەم زووانە دێت 💗</p>';
+  } else {
+    const lab = document.createElement('span'); lab.className = 'lab'; lab.textContent = 'هۆکاری ئەمڕۆ ✨';
+    const no = document.createElement('div'); no.className = 'no'; no.textContent = toKu(n);
+    const tx = document.createElement('div'); tx.className = 'tx'; tx.textContent = REASONS[n - 1];
+    t.appendChild(lab); t.appendChild(no); t.appendChild(tx);
+  }
+
+  const list = $('list');
+  if (n > 1) $('prevH').hidden = false;
+  for (let i = n - 2; i >= 0; i--){
+    const r = document.createElement('div'); r.className = 'r';
+    const nn = document.createElement('div'); nn.className = 'n'; nn.textContent = toKu(i + 1);
+    const x = document.createElement('div'); x.className = 'x'; x.textContent = REASONS[i];
+    r.appendChild(nn); r.appendChild(x); list.appendChild(r);
+  }
+  const items = document.querySelectorAll('.r');
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); } }), {threshold: .15});
+    items.forEach(e => io.observe(e));
+  } else items.forEach(e => e.classList.add('vis'));
+
+  /* floating hearts */
+  (function(){
+    const cv = $('fx'), g = cv.getContext('2d'); let W, H, ps = [];
+    const em = ['💗', '💖', '💕', '🤍'];
+    function resize(){
+      const dpr = Math.min(devicePixelRatio || 1, 1.75); W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ps = Array.from({length: 12}, () => ({x: Math.random() * W, y: Math.random() * H, s: 14 + Math.random() * 16, vy: .4 + Math.random() * .8, ph: Math.random() * 6.28, e: em[Math.floor(Math.random() * 4)]}));
+    }
+    function frame(){
+      g.clearRect(0, 0, W, H); g.globalAlpha = .45; g.textAlign = 'center';
+      for (const q of ps){
+        q.ph += .03; q.y -= q.vy; q.x += Math.sin(q.ph) * .5;
+        if (q.y < -30){ q.y = H + 30; q.x = Math.random() * W; }
+        g.font = q.s + 'px serif'; g.fillText(q.e, q.x, q.y);
+      }
+      requestAnimationFrame(frame);
+    }
+    addEventListener('resize', resize); resize(); requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>
