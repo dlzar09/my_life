@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a0a1e">
+<title>گەنجینەی دروستکراوەکان 🎨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#f6c870;--cream:#fff1dc}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%}
+  body{
+    background:linear-gradient(165deg,#2a0a1e 0%,#4d1030 55%,#7a1b45 100%) fixed;color:var(--cream);
+    font-family:'Amiri','Vazirmatn','Noto Naskh Arabic',Tahoma,serif;line-height:1.9;overflow-x:hidden;
+  }
+  body.lock{overflow:hidden}
+  #fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:2;max-width:620px;margin:0 auto;padding:max(58px,calc(env(safe-area-inset-top) + 48px)) 14px 70px}
+  .head{text-align:center}
+  .head .em{font-size:2.8rem}
+  h1{font-size:clamp(1.8rem,8vw,2.5rem);margin:.1em 0;color:var(--gold);line-height:1.6}
+  .sub{font-family:'Vazirmatn',sans-serif;font-weight:300;font-size:.9rem;color:#f3d9c8;margin:0}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding:18px 2px 10px;margin:0 -14px;padding-inline:14px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:none;font-family:'Vazirmatn',sans-serif;font-size:.85rem;font-weight:600;color:var(--cream);cursor:pointer;
+    background:rgba(255,255,255,.1);border:1px solid rgba(246,200,112,.35);border-radius:999px;padding:7px 16px;white-space:nowrap;
+    transition:background .2s,color .2s,transform .15s;
+  }
+  .tab:active{transform:scale(.95)}
+  .tab.on{color:#3a1220;background:linear-gradient(135deg,#ffe2a1,#f1b255);border-color:transparent}
+  .tab.special{border-color:#ffe2a1;box-shadow:0 0 14px rgba(246,200,112,.35)}
+  .tab small{opacity:.7;font-weight:400;margin-inline-start:4px}
+
+  /* ---------- section blurb ---------- */
+  .blurb{font-family:'Vazirmatn',sans-serif;font-weight:300;font-size:.88rem;color:#f3d9c8;text-align:center;margin:6px 0 16px;min-height:1.6em}
+
+  /* ---------- grid ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .item{
+    position:relative;border-radius:20px;overflow:hidden;cursor:pointer;aspect-ratio:4/5;
+    border:1px solid rgba(246,200,112,.4);box-shadow:0 12px 28px rgba(0,0,0,.35);background:#2a0a1e;
+    opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease;
+  }
+  .item.vis{opacity:1;transform:none}
+  .item:active{transform:scale(.97)}
+  .item>img,.item>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .item .ph{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    font-size:2.8rem;background:linear-gradient(160deg,#4d1030,#8a1f4c);
+  }
+  .item .ph span{font-family:'Vazirmatn',sans-serif;font-size:.72rem;font-weight:300;opacity:.8;padding:0 10px;text-align:center;direction:ltr;word-break:break-all}
+  .cap{
+    position:absolute;left:0;right:0;bottom:0;padding:34px 12px 10px;text-align:center;font-size:1.02rem;line-height:1.7;font-weight:700;
+    background:linear-gradient(to top,rgba(20,4,14,.92),rgba(20,4,14,.55) 55%,transparent);text-shadow:0 2px 8px rgba(0,0,0,.6);
+  }
+  .play{
+    position:absolute;top:10px;left:10px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.5);border:1px solid rgba(246,200,112,.6);font-size:.85rem;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  }
+  .star{
+    position:absolute;top:10px;right:10px;font-family:'Vazirmatn',sans-serif;font-size:.68rem;font-weight:700;color:#3a1220;
+    background:linear-gradient(135deg,#ffe2a1,#f1b255);padding:2px 9px;border-radius:999px;
+  }
+  .empty{grid-column:1/-1;text-align:center;font-family:'Vazirmatn',sans-serif;font-weight:300;color:#f3d9c8;padding:40px 10px}
+  .foot{margin-top:30px;text-align:center;font-family:'Vazirmatn',sans-serif;font-weight:300;font-size:.9rem;color:#f3d9c8}
+
+  /* ---------- lightbox ---------- */
+  #lb{position:fixed;inset:0;z-index:50;background:rgba(14,3,10,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;padding:max(14px,env(safe-area-inset-top)) 12px max(14px,env(safe-area-inset-bottom))}
+  #lb.open{opacity:1;visibility:visible}
+  #lbx{
+    position:absolute;top:max(10px,env(safe-area-inset-top));left:10px;z-index:3;width:40px;height:40px;border-radius:50%;cursor:pointer;
+    font-size:1.2rem;color:#fff;background:rgba(0,0,0,.5);border:1px solid rgba(246,200,112,.55);
+  }
+  .nav{
+    position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:42px;height:42px;border-radius:50%;cursor:pointer;
+    font-size:1.4rem;color:#fff;background:rgba(0,0,0,.45);border:1px solid rgba(246,200,112,.45);line-height:1;padding:0 0 3px;
+  }
+  .nav[hidden]{display:none}
+  #prev{right:8px}
+  #next{left:8px}
+  #stage{position:relative;max-width:100%;max-height:calc(100% - 90px);display:flex;align-items:center;justify-content:center}
+  #stage img,#stage video{max-width:100%;max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);border-radius:16px;display:block;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+  #stage .ov{
+    position:absolute;left:0;right:0;bottom:0;padding:50px 18px 16px;text-align:center;font-size:clamp(1.15rem,5vw,1.5rem);line-height:1.9;font-weight:700;
+    border-radius:0 0 16px 16px;background:linear-gradient(to top,rgba(20,4,14,.9),rgba(20,4,14,.5) 60%,transparent);text-shadow:0 2px 10px rgba(0,0,0,.7);pointer-events:none;
+  }
+  #vcap{margin-top:12px;text-align:center;font-size:clamp(1.1rem,4.8vw,1.4rem);font-weight:700;line-height:1.9;max-width:520px;color:var(--gold)}
+  #meta{font-family:'Vazirmatn',sans-serif;font-weight:300;font-size:.78rem;color:#f3d9c8;margin-top:4px;text-align:center}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+
+<div class="wrap">
+  <div class="head">
+    <div class="em">🎨</div>
+    <h1>گەنجینەی دروستکراوەکان</h1>
+    <p class="sub">ڕەسم، وێنە، ڤیدیۆ و هەموو ئەو شتانەی بە دەستی خۆمان دروستمان کردوون</p>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <p class="blurb" id="blurb"></p>
+  <div class="grid" id="grid"></div>
+  <p class="foot">شتی نوێ زیاد دەبێت 💗</p>
+</div>
+
+<div id="lb" aria-hidden="true">
+  <button id="lbx" aria-label="داخستن">✕</button>
+  <button class="nav" id="prev" aria-label="پێشوو">›</button>
+  <button class="nav" id="next" aria-label="دواتر">‹</button>
+  <div id="stage"></div>
+  <div id="vcap"></div>
+  <div id="meta"></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const toKu = v => String(v).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+  /* =========================================================================
+     ✍️  شتی نوێ لێرەوە زیاد بکە
+
+     ١. فایلی وێنە یان ڤیدیۆکە بخەرە ناو فۆڵدەری  media/
+        (نموونە: media/eye.jpg  یان  media/cooking.mp4)
+     ٢. لە لیستی ITEMS لە خوارەوە، دێڕێک لە کۆتایی لیستەکە زیاد بکە:
+
+        {file:'media/ناوی-فایلەکە.jpg', type:'image', cat:'draw', special:false,
+         caption:'ئەو وتەیەی لەسەر وێنەکە دەردەکەوێت', date:'2026-11-20'},
+
+        type     = 'image' یان 'video'
+        cat      = بەشی ئاسایی (لە لیستی CATS لە خوارەوە: draw / memories / video)
+        special  = true ئەگەر ئەمە لە شتە دروستکراوەکانی سومەیە
+                   (لە بەشی تایبەتیشدا دەردەکەوێت)
+        caption  = وتە (دەتوانیت بەتاڵی بهێڵیتەوە)
+        date     = بەروار (ئارەزوومەندانە)
+        poster   = بۆ ڤیدیۆ، وێنەیەکی بەرگ (ئارەزوومەندانە)
+
+     بۆ بەشێکی نوێ، دێڕێک لە CATS زیاد بکە.
+     ========================================================================= */
+
+  const SPECIAL = {id:'special', emoji:'🌟', title:'دروستکراوەکانی سومەیە',
+                   blurb:'ئەو شتە جوانانەی سومەیە بە دەستی خۆی دروستی کردوون 💗'};
+
+  const CATS = [
+    {id:'draw',     emoji:'🎨', title:'ڕەسم و دیزاین',     blurb:'ڕەسم و دیزاینەکان'},
+    {id:'memories', emoji:'📱', title:'بیرەوەرییەکانمان',  blurb:'ئەو چرکە ساتانەی هەرگیز لەبیر ناکرێن'},
+    {id:'video',    emoji:'🎬', title:'ڤیدیۆکان',          blurb:'ڤیدیۆ و ڕیلەکان'}
+  ];
+
+  const ITEMS = [
+    {file:'media/eye.jpg',          type:'image', cat:'draw',     special:false,
+     caption:'چاوەکانت جوانترین شتن کە تائێستا دیتوومە 👁️💗', date:'2026-11-20'},
+     
+      {file:'media/twin.jpg',          type:'image', cat:'draw',     special:false,
+     caption:'ئەو کەسە بەبەختەی کە بە خۆشەویستی من دەچێت 💗', date:'2026-11-20'},
+
+    {file:'media/letter-d.jpg',     type:'image', cat:'draw',     special:true,
+     caption:'D... یەکەم پیتی من، بە دەستی تۆ 💌',            date:'2026-11-20'},
+
+    {file:'media/first-call.jpg',   type:'image', cat:'memories', special:false,
+     caption:'یەکەم پەیوەندیمان... لەو ساتەوە هەموو شت گۆڕا 📞', date:'2026-11-20'},
+
+      {file:'media/s04.mp4',       type:'video', cat:'draw', special:false,
+     caption:'خۆشەویستە ڕۆشنبیرەکەم 😜',          date:'2026-11-20'},
+
+    {file:'media/call-2.jpg',       type:'image', cat:'memories', special:false,
+     caption:'ئەو پەیوەندییەی نەمویست کۆتایی بێت 💞',          date:'2026-11-20'},
+
+    {file:'media/cooking.mp4',      type:'video', cat:'video',    special:true,
+     caption:'خواردن دروست کردن بە دەستی خۆشەویستەکەم 🍳',    date:'2026-11-20'},
+
+    {file:'media/reel-wedding.mp4', type:'video', cat:'video',    special:false,
+     caption:'وتەیەک بۆ ڕۆژێک کە چاوەڕێی دەکەین 💍',           date:'2026-11-20'},
+
+     {file:'media/pak.mp4', type:'video', cat:'video',    special:false,
+     caption:'پاکەکان بۆ پاکەکان ❤️',           date:'2026-11-20'},
+
+     {file:'media/tome.mp4', type:'video', cat:'video',    special:false,
+     caption:'وتەیەک کە بۆمن زۆر گەرەبو 💍',           date:'2026-11-20'},
+
+     {file:'media/d&s.jpg',       type:'image', cat:'draw', special:false,
+     caption:'بۆ هەمیشە لەگەڵت دەمێنمەوە 💞',          date:'2026-11-20'},
+     
+     {file:'media/s1.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s2.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s3.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s4.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s5.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s6.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s7.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s8.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s9.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s10.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s11.jpg',       type:'image', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s01.mp4',       type:'video', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s02.mp4',       type:'video', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+      {file:'media/s03.mp4',       type:'video', cat:'draw', special:true,
+     caption:'دروست کراوە شازەکانی سومەیە 👌',          date:'2026-11-20'},
+
+     
+  ];
+  /* ========================================================================= */
+
+  const MONTHS = ['کانوونی دووەم','شوبات','ئازار','نیسان','ئایار','حوزەیران','تەمووز','ئاب','ئەیلوول','تشرینی یەکەم','تشرینی دووەم','کانوونی یەکەم'];
+  function fmt(iso){
+    if (!iso) return '';
+    const p = iso.split('-').map(Number);
+    return toKu(p[2]) + 'ی ' + MONTHS[p[1] - 1] + ' ' + toKu(p[0]);
+  }
+  const catOf = id => CATS.find(c => c.id === id);
+  const isImg = it => it.type !== 'video';
+
+  /* ---------- tabs ---------- */
+  let current = 'all';
+  const tabs = [{id:'all', emoji:'💗', title:'هەموو', blurb:'هەموو دروستکراوەکان لە یەک شوێن'}]
+    .concat([SPECIAL]).concat(CATS);
+
+  function inTab(it, id){
+    if (id === 'all') return true;
+    if (id === 'special') return !!it.special;
+    return it.cat === id;
+  }
+  function renderTabs(){
+    const box = $('tabs'); box.innerHTML = '';
+    tabs.forEach(t => {
+      const n = ITEMS.filter(it => inTab(it, t.id)).length;
+      if (t.id !== 'all' && n === 0 && t.id !== 'special') return; // hide empty normal sections
+      const b = document.createElement('button');
+      b.className = 'tab' + (t.id === 'special' ? ' special' : '') + (t.id === current ? ' on' : '');
+      b.innerHTML = '';
+      b.appendChild(document.createTextNode(t.emoji + ' ' + t.title));
+      const s = document.createElement('small'); s.textContent = toKu(n); b.appendChild(s);
+      b.addEventListener('click', () => { current = t.id; renderTabs(); renderGrid(); });
+      box.appendChild(b);
+    });
+  }
+
+  /* ---------- grid ---------- */
+  let view = [];
+  function placeholder(it){
+    const d = document.createElement('div'); d.className = 'ph';
+    d.textContent = isImg(it) ? '🖼️' : '🎞️';
+    const s = document.createElement('span'); s.textContent = it.file; d.appendChild(s);
+    return d;
+  }
+  function renderGrid(){
+    const t = tabs.find(x => x.id === current);
+    $('blurb').textContent = t ? t.blurb : '';
+    view = ITEMS.filter(it => inTab(it, current));
+    const g = $('grid'); g.innerHTML = '';
+    if (!view.length){
+      const e = document.createElement('div'); e.className = 'empty'; e.textContent = 'هێشتا هیچ شتێک لێرە نییە، بەم زووانە دێت 💗';
+      g.appendChild(e); return;
+    }
+    const nodes = [];
+    view.forEach((it, i) => {
+      const c = document.createElement('div'); c.className = 'item';
+      let m;
+      if (isImg(it)){
+        m = document.createElement('img'); m.loading = 'lazy'; m.alt = it.caption || ''; m.src = it.file;
+      } else {
+        m = document.createElement('video'); m.muted = true; m.playsInline = true; m.preload = 'metadata'; m.setAttribute('playsinline','');
+        if (it.poster) m.poster = it.poster;
+        m.src = it.file + '#t=0.1';
+      }
+      m.addEventListener('error', () => { m.replaceWith(placeholder(it)); });
+      c.appendChild(m);
+      if (!isImg(it)){ const p = document.createElement('div'); p.className = 'play'; p.textContent = '▶'; c.appendChild(p); }
+      if (it.special && current !== 'special'){ const s = document.createElement('div'); s.className = 'star'; s.textContent = 'دروستکراوی سومەیە 🌟'; c.appendChild(s); }
+      if (it.caption){ const cp = document.createElement('div'); cp.className = 'cap'; cp.textContent = it.caption; c.appendChild(cp); }
+      c.addEventListener('click', () => openLb(i));
+      g.appendChild(c); nodes.push(c);
+    });
+    if ('IntersectionObserver' in window){
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); } }), {threshold:.1});
+      nodes.forEach(n => io.observe(n));
+    } else nodes.forEach(n => n.classList.add('vis'));
+  }
+
+  /* ---------- lightbox ---------- */
+  let idx = 0;
+  function stopMedia(){ const v = $('stage').querySelector('video'); if (v){ try { v.pause(); } catch(e){} } }
+  function showLb(){
+    stopMedia();
+    const it = view[idx]; if (!it) return;
+    const st = $('stage'); st.innerHTML = '';
+    let m;
+    if (isImg(it)){
+      m = document.createElement('img'); m.alt = it.caption || ''; m.src = it.file;
+    } else {
+      m = document.createElement('video'); m.controls = true; m.autoplay = true; m.playsInline = true; m.setAttribute('playsinline','');
+      if (it.poster) m.poster = it.poster;
+      m.src = it.file;
+      m.play && m.play().catch(() => {});
+    }
+    m.addEventListener('error', () => { m.replaceWith(placeholder(it)); });
+    st.appendChild(m);
+    if (isImg(it) && it.caption){ const o = document.createElement('div'); o.className = 'ov'; o.textContent = it.caption; st.appendChild(o); }
+    $('vcap').textContent = (!isImg(it) && it.caption) ? it.caption : '';
+    $('meta').textContent = fmt(it.date) + (it.date ? '  ·  ' : '') + toKu(idx + 1) + ' / ' + toKu(view.length);
+    $('prev').hidden = $('next').hidden = view.length < 2;
+  }
+  function openLb(i){
+    idx = i; showLb();
+    $('lb').classList.add('open'); $('lb').setAttribute('aria-hidden','false'); document.body.classList.add('lock');
+  }
+  function closeLb(){
+    stopMedia();
+    $('lb').classList.remove('open'); $('lb').setAttribute('aria-hidden','true'); document.body.classList.remove('lock');
+    setTimeout(() => { if (!$('lb').classList.contains('open')) $('stage').innerHTML = ''; }, 320);
+  }
+  function step(d){ if (view.length < 2) return; idx = (idx + d + view.length) % view.length; showLb(); }
+  $('lbx').addEventListener('click', closeLb);
+  $('prev').addEventListener('click', e => { e.stopPropagation(); step(-1); });
+  $('next').addEventListener('click', e => { e.stopPropagation(); step(1); });
+  $('lb').addEventListener('click', e => { if (e.target === $('lb')) closeLb(); });
+  addEventListener('keydown', e => {
+    if (!$('lb').classList.contains('open')) return;
+    if (e.key === 'Escape') closeLb();
+    else if (e.key === 'ArrowLeft') step(1);
+    else if (e.key === 'ArrowRight') step(-1);
+  });
+  let sx = null;
+  $('lb').addEventListener('touchstart', e => { sx = e.touches.length === 1 ? e.touches[0].clientX : null; }, {passive:true});
+  $('lb').addEventListener('touchend', e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx; sx = null;
+    if (Math.abs(dx) > 60 && !(e.target.tagName === 'VIDEO')) step(dx < 0 ? 1 : -1);
+  }, {passive:true});
+
+  renderTabs(); renderGrid();
+
+  /* ---------- floating dust ---------- */
+  (function(){
+    const cv = $('fx'), g = cv.getContext('2d'); let W, H, ps = [];
+    function resize(){
+      const dpr = Math.min(devicePixelRatio || 1, 1.75); W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ps = Array.from({length: 55}, () => ({x: Math.random() * W, y: Math.random() * H, r: .6 + Math.random() * 1.8, vy: .15 + Math.random() * .5, ph: Math.random() * 6.28}));
+    }
+    function frame(){
+      g.clearRect(0, 0, W, H);
+      for (const q of ps){
+        q.ph += .02; q.y -= q.vy; q.x += Math.sin(q.ph) * .25;
+        if (q.y < -10){ q.y = H + 10; q.x = Math.random() * W; }
+        g.fillStyle = 'rgba(255,225,160,' + (.2 + .55 * Math.abs(Math.sin(q.ph))) + ')';
+        g.beginPath(); g.arc(q.x, q.y, q.r, 0, 6.283); g.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    addEventListener('resize', resize); resize(); requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>
